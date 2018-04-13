@@ -4,7 +4,7 @@ namespace Asahasrabuddhe\LaravelAPI\Providers;
 
 use Asahasrabuddhe\LaravelAPI\Handlers\ExceptionHandler;
 use Asahasrabuddhe\LaravelAPI\Routing\ResourceRegistrar;
-use Asahasrabuddhe\LaravelAPI\Routing\Router;
+use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 // use Illuminate\Routing\RouteCollection;
@@ -12,13 +12,13 @@ use Illuminate\Events\Dispatcher;
 // use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 
-class ApiServiceProvider extends ServiceProvider
+class APIServiceProvider extends ServiceProvider
 {
 
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../api.php' => config_path("api.php"),
+            __DIR__.'/../config/api.php' => config_path("api.php"),
         ]);
     }
 
@@ -33,23 +33,23 @@ class ApiServiceProvider extends ServiceProvider
         $this->registerExceptionHandler();
 
         $this->mergeConfigFrom(
-            __DIR__.'/../api.php', 'api'
+            __DIR__.'/../config/api.php', 'api'
         );
     }
 
     public function registerRouter()
     {
         $this->app->singleton(
-            Router::class,
+            BaseRouter::class,
             function ($app) {
-                return new Router($app->make(Dispatcher::class), $app->make(Container::class));
+                return new BaseRouter($app->make(Dispatcher::class), $app->make(Container::class));
             }
         );
 
         $this->app->singleton(
             ResourceRegistrar::class,
             function ($app) {
-                return new ResourceRegistrar($app->make(Router::class));
+                return new ResourceRegistrar($app->make(BaseRouter::class));
             }
         );
     }

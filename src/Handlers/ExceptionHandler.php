@@ -3,7 +3,7 @@
 namespace Asahasrabuddhe\LaravelAPI\Handlers;
 
 use App\Exceptions\Handler;
-use Asahasrabuddhe\LaravelAPI\Response;
+use Asahasrabuddhe\LaravelAPI\BaseResponse as Response;
 use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\UnauthorizedException;

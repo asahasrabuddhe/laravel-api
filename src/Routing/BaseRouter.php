@@ -1,13 +1,13 @@
 <?php
 
-namespace Asashasrabuddhe\LaravelAPI\Routing;
+namespace Asahasrabuddhe\LaravelAPI\Routing;
 
 use Closure;
-use Asashasrabuddhe\LaravelAPI\Middleware\BaseMiddleware;
+use Asahasrabuddhe\LaravelAPI\Middleware\BaseMiddleware;
 use Illuminate\Routing\ResourceRegistrar;
 use Illuminate\Routing\Router;
 
-class ApiRouter extends Router
+class BaseRouter extends Router
 {
 
     protected $versions = [];
@@ -60,7 +60,7 @@ class ApiRouter extends Router
         $prefix = config("api.prefix");
 
         if (empty($this->versions)) {
-            if (($default = config("api.default_version")) !== null) {
+            if (($default = config("api.version")) !== null) {
                 $versions = [$default];
             }
             else {

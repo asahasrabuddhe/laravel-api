@@ -2,6 +2,7 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Routing;
 
+use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
 use Illuminate\Routing\ResourceRegistrar as IlluminateRegistrar;
 use Illuminate\Support\Str;
 
@@ -17,9 +18,9 @@ class ResourceRegistrar extends IlluminateRegistrar
     /**
      * Create a new resource registrar instance.
      *
-     * @param Router|\Illuminate\Routing\Router $router
+     * @param BaseRouter|\Illuminate\Routing\Router $router
      */
-    public function __construct(Router $router)
+    public function __construct(BaseRouter $router)
     {
         $this->router = $router;
     }

@@ -1,8 +1,8 @@
 <?php
 
 namespace Asahasrabuddhe\LaravelAPI;
-
-use Illuminate\Http\Response;
+use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
+use Illuminate\Support\Facades\Response;
 
 class BaseResponse
 {
@@ -92,11 +92,11 @@ class BaseResponse
     /**
      * Handle api exception an return proper error response
      * 
-     * @param ApiException $exception
+     * @param BaseException $exception
      * @return \Illuminate\Http\Response
-     * @throws ApiException
+     * @throws BaseException
      */
-    public static function exception(ApiException $exception)
+    public static function exception(BaseException $exception)
     {
         $returnResponse = Response::make($exception->jsonSerialize());
 

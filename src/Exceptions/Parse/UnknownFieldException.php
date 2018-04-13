@@ -9,7 +9,7 @@ class UnknownFieldException extends BaseException
 {
     protected $code = ErrorCodes::REQUEST_PARSE_EXCEPTION;
 
-    protected $innerError = ErrorCodes::INNER_UNKNOWN_FILED_EXCEPTION;
+    protected $innerError = ErrorCodes::UNKNOWN_FIELD_EXCEPTION;
     
     protected $message = "One of the specified fields does not exist";
 }

@@ -25,8 +25,7 @@ class BaseMiddleware
                 ->header('Access-Control-Allow-Methods', implode(',', config('api.allowedCorsMethods')))
                 ->header('Access-Control-Allow-Headers', implode(',', config('api.allowedCorsHeaders')));
         }
-
-
+        
         return $response;
     }
 }

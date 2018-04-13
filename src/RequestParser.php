@@ -6,6 +6,7 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
+use Illuminate\Support\Str;
 
 class RequestParser
 {

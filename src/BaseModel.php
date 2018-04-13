@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-class BaseModel extends Model
+class BaseModel extends Model 
 {
 
     /**
@@ -232,7 +232,7 @@ class BaseModel extends Model
     {
         $this->raw = $attributes;
 
-        $excludes = config("api.excludes");
+        $excludes = [];//config("api.excludes");
 
         foreach ($attributes as $key => $attribute) {
             // Guarded attributes should be removed

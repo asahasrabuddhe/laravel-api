@@ -11,7 +11,7 @@ class InvalidPerPageLimitException extends BaseException
 
     protected $code = ErrorCodes::REQUEST_PARSE_EXCEPTION;
 
-    protected $innercode = ErrorCodes::INNER_INVALID_LIMIT;
+    protected $innercode = ErrorCodes::INVALID_LIMIT;
 
     protected $message = "The per page limit cannot be negative or zero";
 }

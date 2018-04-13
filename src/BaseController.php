@@ -155,7 +155,7 @@ class BaseController extends Controller
 
         $meta = $this->getMetaData();
 
-        return ApiResponse::make(null, $results, $meta);
+        return BaseResponse::make(null, $results, $meta);
     }
 
     /**
@@ -183,7 +183,7 @@ class BaseController extends Controller
 
         $meta = $this->getMetaData(true);
 
-        return ApiResponse::make(null, $results, $meta);
+        return BaseResponse::make(null, $results, $meta);
     }
 
     public function store()
@@ -212,7 +212,7 @@ class BaseController extends Controller
             call_user_func([$this, 'stored'], $object);
         }
 
-        return ApiResponse::make("Resource created successfully", [ "id" => $object->id ], $meta);
+        return BaseResponse::make("Resource created successfully", [ "id" => $object->id ], $meta);
     }
 
     public function update(...$args)
@@ -250,7 +250,7 @@ class BaseController extends Controller
             call_user_func([$this, 'updated'], $object);
         }
 
-        return ApiResponse::make("Resource updated successfully", [ "id" => $object->id ], $meta);
+        return BaseResponse::make("Resource updated successfully", [ "id" => $object->id ], $meta);
     }
 
     public function destroy(...$args)
@@ -286,7 +286,7 @@ class BaseController extends Controller
             call_user_func([$this, 'destroyed'], $object);
         }
 
-        return ApiResponse::make("Resource deleted successfully", null, $meta);
+        return BaseResponse::make("Resource deleted successfully", null, $meta);
     }
 
     public function relation($id, $relation)
@@ -314,7 +314,7 @@ class BaseController extends Controller
 
         $meta = $this->getMetaData(true);
 
-        return ApiResponse::make(null, $data, $meta);
+        return BaseResponse::make(null, $data, $meta);
 
     }
 

@@ -10,7 +10,7 @@ class FilterNotFoundException extends BaseException
 
     protected $code = ErrorCodes::REQUEST_PARSE_EXCEPTION;
 
-    protected $innerError = ErrorCodes::INNER_FILTER_NOT_FOUND;
+    protected $innerError = ErrorCodes::FILTER_NOT_FOUND;
 
     protected $message = "Requested filter cannot be found";
 

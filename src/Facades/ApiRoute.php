@@ -2,8 +2,8 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Facades;
 
-use Asahasrabuddhe\LaravelAPI\Routing\Route;
 use Illuminate\Support\Facades\Facade;
+use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
 
 class ApiRoute extends Facade
 {
@@ -15,6 +15,6 @@ class ApiRoute extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return Route::class;
+        return BaseRouter::class;
     }
 }
