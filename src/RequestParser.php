@@ -2,6 +2,11 @@
 
 namespace Asahasrabuddhe\LaravelAPI;
 
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
+
 class RequestParser
 {
     /**
@@ -176,6 +181,7 @@ class RequestParser
     /**
      * Parse request and fill the parameters
      * @return $this current controller object for chain method calling
+     * @throws InvalidPerPageLimitException
      * @throws InvalidFilterDefinitionException
      * @throws InvalidOrderingDefinitionException
      */
@@ -183,8 +189,7 @@ class RequestParser
     {
         if (request()->limit) {
             if (request()->limit <= 0) {
-                // TO DO
-                // throw new InvalidLimitException();
+                throw new InvalidPerPageLimitException;
             } else {
                 $this->limit = request()->limit;
             }
@@ -231,7 +236,7 @@ class RequestParser
                 $filterable = call_user_func($this->model . "::getFilterableFields");
                 foreach ($parts[1] as $column) {
                     if (!in_array($column, $filterable)) {
-                        throw new NotAllowedToFilterOnThisFieldException("Applying filter on field \"" . $column . "\" is not allowed");
+                        throw new FieldCannotBeFilteredException("Applying filter on field \"" . $column . "\" is not allowed");
                     }
                 }
                 // Convert filter name to sql `column` format
