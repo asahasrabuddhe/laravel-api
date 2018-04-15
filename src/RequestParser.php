@@ -7,13 +7,15 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RequestParser
 {
     /**
      * Checks if fields are specified correctly
      */
-    const FIELDS_REGEX = "/([a-zA-Z0-9\\_\\-\\:\\.\\(\\)]+(?'curly'\\{((?>[^{}]+)|(?&curly))*\\})?+)/";
+    const FIELDS_REGEX = "/([a-zA-Z0-9\\_\\-\\:\\.\\(\\)]+(\\{((?>[^{}]+)|)*\\})?+)/";
     /**
      * Extracts fields parts
      */
@@ -30,6 +32,24 @@ class RequestParser
      * Checks if ordering is specified correctly
      */
     const ORDER_FILTER = "/[\\s]*([\\w\\.]+)(?:[\\s](?!,))*(asc|desc|)/i";
+
+    /**
+     * Extract order parts for relational field
+     */
+    const RELATION_ORDER_REGEX = "/[\\s]*([\\w]+)\\.([\\w]+)(?:[\\s](?!,))*(asc|desc|)/";
+
+    // /**
+    //  * Extract order parts for regular field
+    //  */
+    // const ORDER_REGEX = "/[\\s]*([\\w`\\.]+)(?:[\\s](?!,))*(asc|desc|)/";
+
+    const OPERATOR_REGEX = "/[\\s]+eq|ne|gt|ge|lt|le|lk[\\s]+/i";
+
+    const NULL_NOT_NULL_REGEX = "/(ne|eq)[\\s]+(null)/i";
+
+    const RELATION_FILTER_REGEX = "/([\\w]+)\\.([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i";
+
+    const REGULAR_FILTER_REGEX = "/([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i";
 
     /**
      * Full class reference to the model represented in this request.
@@ -181,6 +201,7 @@ class RequestParser
     }
     /**
      * Parse request and fill the parameters
+     * 
      * @return $this current controller object for chain method calling
      * @throws InvalidPerPageLimitException
      * @throws InvalidFilterDefinitionException
@@ -232,8 +253,8 @@ class RequestParser
     {
         if (request()->filters) {
             $filters = "(" . request()->filters . ")";
-            if (preg_match(RequestParser::FILTER_REGEX, $filters) === 1) {
-                preg_match_all(RequestParser::FILTER_PARTS_REGEX, $filters, $parts);
+            if (preg_match(static::FILTER_REGEX, $filters) === 1) {
+                preg_match_all(static::FILTER_PARTS_REGEX, $filters, $parts);
                 $filterable = call_user_func($this->model . "::getFilterableFields");
                 foreach ($parts[1] as $column) {
                     if (!in_array($column, $filterable)) {
@@ -241,80 +262,112 @@ class RequestParser
                     }
                 }
                 // Convert filter name to sql `column` format
-                $where = preg_replace(
-                    [
-                        "/([\\w]+)\\.([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i",
-                        "/([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i",
-                    ],
-                    [
-                        "`$1`.`$2` $3",
-                        "`$1` $2",
-                    ],
-                    $filters
-                );
+                $where = preg_replace_callback_array([
+                        static::RELATION_FILTER_REGEX => [$this, 'formatRelationalFilteredFieldToSql'],
+                        static::REGULAR_FILTER_REGEX => [$this, 'formatFilteredFieldToSql']
+                    ], $filters);
                 // convert eq null to is null and ne null to is not null
-                $where = preg_replace(
-                    [
-                        "/ne[\\s]+null/i",
-                        "/eq[\\s]+null/i"
-                    ],
-                    [
-                        "is not null",
-                        "is null"
-                    ],
-                    $where
-                );
+                $where = preg_replace_callback_array([
+                        static::NULL_NOT_NULL_REGEX => [$this, 'formatNullAndNotNull'],
+                    ],$where);
                 // Replace operators
-                $where = preg_replace(
-                    [
-                        "/[\\s]+eq[\\s]+/i",
-                        "/[\\s]+ne[\\s]+/i",
-                        "/[\\s]+gt[\\s]+/i",
-                        "/[\\s]+ge[\\s]+/i",
-                        "/[\\s]+lt[\\s]+/i",
-                        "/[\\s]+le[\\s]+/i",
-                        "/[\\s]+lk[\\s]+/i"
-                    ],
-                    [
-                        " = ",
-                        " != ",
-                        " > ",
-                        " >= ",
-                        " < ",
-                        " <= ",
-                        " LIKE "
-                    ],
-                    $where
-                );
+                $where = preg_replace_callback_array([
+                    static::OPERATOR_REGEX => [$this, 'replaceOperators'],
+                ],$where);
+                
                 $this->filters = $where;
             } else {
                 throw new InvalidFilterDefinitionException();
             }
         }
     }
+
+     /**
+     * Formats relational field in SQL format
+     *
+     * @param array $matches
+     * @return string
+     */
+    protected function formatRelationalFilteredFieldToSql($matches) {
+        return '`' . $matches[1] . '`.`' . $matches[2] . '` ' . $matches[3]; 
+    }
+
+    /**
+     * Formats field in SQL format
+     *
+     * @param array $matches
+     * @return string
+     */
+    protected function formatFilteredFieldToSql($matches) {
+        return '`' . $matches[1] . '` ' . $matches[2];
+    }
+
+    protected function formatNullAndNotNull($matches) {
+        switch($matches[1]) {
+            case 'ne':
+                return 'is not ' . $matches[2];
+            case 'eq':
+                return 'is ' . $matches[2];
+        }
+    }
+
+    protected function replaceOperators($matches) {
+       switch($matches[0]) {
+            case 'eq':   
+                return " = ";
+            case 'ne':
+                return" != ";
+            case 'gt':
+                return" > ";
+            case 'ge':
+                return" >= ";
+            case 'lt':
+                return" < ";
+            case 'le':
+                return" <= ";
+            case 'lk':
+                return" LIKE ";
+       }
+    }
+
     protected function extractOrdering()
     {
         if (request()->order) {
-            if (preg_match(RequestParser::ORDER_FILTER, request()->order) === 1) {
+            if (preg_match(static::ORDER_FILTER, request()->order) === 1) {
                 $order = request()->order;
-                // eg :  user.name asc, year desc, age,month
-                $order = preg_replace(
-                    [
-                        "/[\\s]*([\\w]+)\\.([\\w]+)(?:[\\s](?!,))*(asc|desc|)/",
-                        "/[\\s]*([\\w`\\.]+)(?:[\\s](?!,))*(asc|desc|)/",
-                    ],
-                    [
-                        "$1`.`$2 $3", // Result: user`.`name asc, year desc, age,month
-                        "`$1` $2", // Result: `user`.`name` asc, `year` desc, `age`,`month`
-                    ],
-                    $order
-                );
+                $order = preg_replace_callback_array([
+                    static::RELATION_ORDER_REGEX => [$this, 'formatRelationalOrderingFieldToSql'],
+                    static::ORDER_FILTER => [$this, 'formatOrderingFieldToSql']
+                    ], $order);
                 $this->order = $order;
             } else {
                 throw new InvalidOrderingDefinitionException();
             }
         }
     }
+
+    /**
+     * Formats relational field in SQL format
+     * eg. user.id desc, ->  user`.`id desc
+     *
+     * @param array $matches
+     * @return string
+     */
+    protected function formatRelationalOrderingFieldToSql($matches) {
+        return $matches[1] . '`.`' . $matches[2] . ' ' . $matches[3]; 
+    }
+
+    /**
+     * Formats field in SQL format
+     * eg. id asc, ->  `id` asc
+     *
+     * @param array $matches
+     * @return string
+     */
+    protected function formatOrderingFieldToSql($matches) {
+        return '`' . $matches[1] . '` ' . $matches[2];
+    }
+
     /**
      * Recursively parses fields to extract limit, ordering and their own fields
      * and adds width relations
@@ -330,6 +383,7 @@ class RequestParser
                 preg_match_all(static::FIELD_PARTS_REGEX, $match, $parts);
                 $fieldName = $parts[1][0];
                 if (Str::contains($fieldName, ":") || call_user_func($this->model . "::relationExists", $fieldName)) {
+
                     // If field name has a colon, we assume its a relations
                     // OR
                     // If method with field name exists in the class, we assume its a relation
@@ -407,18 +461,21 @@ class RequestParser
                         }
                     } else {
                         $relation = call_user_func([new $this->model(), $fieldName]);
-                        if ($relation instanceof HasOne) {
-                            $keyField = explode(".", $relation->getQualifiedParentKeyName())[1];
-                        } else if ($relation instanceof BelongsTo) {
-                            $keyField = explode(".", $relation->getQualifiedForeignKey())[1];
+                        
+                        switch(true) {
+                            case $relation instanceof HasOne:
+                                $keyField = explode(".", $relation->getQualifiedParentKeyName())[1];
+                                break;
+                            case $relation instanceof BelongsTo:
+                                $keyField = explode(".", $relation->getQualifiedForeignKey())[1];
+                                $this->relations[$fieldName]["limit"] = max($this->relations[$fieldName]["limit"], $this->limit);
+                                break;
+                            case $relation instanceof HasMany:
+                                $this->relations[$fieldName]["limit"] = $this->relations[$fieldName]["limit"] * $this->limit;
                         }
+                            
                         if (isset($keyField) && !in_array($keyField, $this->fields)) {
                             $this->fields[] = $keyField;
-                        }
-                        if ($relation instanceof BelongsTo) {
-                            $this->relations[$fieldName]["limit"] = max($this->relations[$fieldName]["limit"], $this->limit);
-                        } else if ($relation instanceof HasMany) {
-                            $this->relations[$fieldName]["limit"] = $this->relations[$fieldName]["limit"] * $this->limit;
                         }
                     }
                 } else {
