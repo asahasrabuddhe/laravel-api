@@ -2,23 +2,22 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Providers;
 
-use Asahasrabuddhe\LaravelAPI\Handlers\ExceptionHandler;
-use Asahasrabuddhe\LaravelAPI\Routing\ResourceRegistrar;
-use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
-use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Container\Container;
+use Illuminate\Support\ServiceProvider;
+use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
+use Asahasrabuddhe\LaravelAPI\Handlers\ExceptionHandler;
 // use Illuminate\Routing\RouteCollection;
 // use Illuminate\Routing\Router;
 // use Illuminate\Routing\UrlGenerator;
-use Illuminate\Support\ServiceProvider;
+use Asahasrabuddhe\LaravelAPI\Routing\ResourceRegistrar;
 
 class APIServiceProvider extends ServiceProvider
 {
-
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/api.php' => config_path("api.php"),
+            __DIR__.'/../config/api.php' => config_path('api.php'),
         ]);
     }
 

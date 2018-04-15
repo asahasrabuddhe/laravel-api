@@ -10,5 +10,5 @@ class ResourceNotFoundException extends BaseException
 
     protected $code = ErrorCodes::RESOURCE_NOT_FOUND_EXCEPTION;
 
-    protected $message = "Requested resource not found";
+    protected $message = 'Requested resource not found';
 }

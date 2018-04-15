@@ -1,28 +1,28 @@
 <?php
 
 namespace Asahasrabuddhe\LaravelAPI;
-use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
+
 use Illuminate\Support\Facades\Response;
+use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
 
 class BaseResponse
 {
-
     /**
-     * Response message
+     * Response message.
      *
      * @var string
      */
     private $message = null;
 
     /**
-     * Data to send in response
+     * Data to send in response.
      *
      * @var array
      */
     private $data = null;
 
     /**
-     * Get response message
+     * Get response message.
      *
      * @return string
      */
@@ -32,7 +32,7 @@ class BaseResponse
     }
 
     /**
-     * Set response message
+     * Set response message.
      *
      * @param string $message
      */
@@ -42,7 +42,7 @@ class BaseResponse
     }
 
     /**
-     * Get response data
+     * Get response data.
      *
      * @return array
      */
@@ -52,7 +52,7 @@ class BaseResponse
     }
 
     /**
-     * Set response data
+     * Set response data.
      *
      * @param array $data
      */
@@ -62,8 +62,8 @@ class BaseResponse
     }
 
     /**
-     * Make new success response
-     * 
+     * Make new success response.
+     *
      * @param string $message
      * @param array $data
      * @return Response
@@ -72,16 +72,16 @@ class BaseResponse
     {
         $response = [];
 
-        if (!empty($message)) {
-            $response["message"] = $message;
+        if (! empty($message)) {
+            $response['message'] = $message;
         }
 
-        if ($data !== null && is_array($data)){
-            $response["data"] = $data;
+        if ($data !== null && is_array($data)) {
+            $response['data'] = $data;
         }
 
-        if ($meta !== null && is_array($meta)){
-            $response["meta"] = $meta;
+        if ($meta !== null && is_array($meta)) {
+            $response['meta'] = $meta;
         }
 
         $returnResponse = Response::make($response);
@@ -90,8 +90,8 @@ class BaseResponse
     }
 
     /**
-     * Handle api exception an return proper error response
-     * 
+     * Handle api exception an return proper error response.
+     *
      * @param BaseException $exception
      * @return \Illuminate\Http\Response
      * @throws BaseException

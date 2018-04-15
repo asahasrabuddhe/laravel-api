@@ -2,9 +2,8 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Routing;
 
-use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
-use Illuminate\Routing\ResourceRegistrar as IlluminateRegistrar;
 use Illuminate\Support\Str;
+use Illuminate\Routing\ResourceRegistrar as IlluminateRegistrar;
 
 class ResourceRegistrar extends IlluminateRegistrar
 {
@@ -71,7 +70,7 @@ class ResourceRegistrar extends IlluminateRegistrar
      */
     protected function addResourceRelation($name, $base, $controller, $options)
     {
-        $uri = $this->getResourceUri($name).'/{'.$base.'}'."/{relation}";
+        $uri = $this->getResourceUri($name).'/{'.$base.'}'.'/{relation}';
 
         $action = $this->getResourceAction($name, $controller, 'relation', $options);
 
