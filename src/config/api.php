@@ -18,7 +18,7 @@ return [
      */
     'allowedCorsHeaders' => [
         'Authorization',
-        'Content-Type'
+        'Content-Type',
     ],
     /*
      * The following list of hosts will be permitted for a CORS request.
@@ -35,7 +35,7 @@ return [
         'PUT',
         'PATCH',
         'DELETE',
-        'OPTIONS'
+        'OPTIONS',
     ],
     /*
      * The global prefix for all API routes.

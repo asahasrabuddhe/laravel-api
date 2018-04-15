@@ -1,49 +1,48 @@
-<?php 
+<?php
 
 namespace Asahasrabuddhe\LaravelAPI;
 
-use Carbon\Carbon;
 use Closure;
+use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
-class BaseModel extends Model 
+class BaseModel extends Model
 {
-
     /**
      * List of fields that are visible by default. Only these fields
-     * are selected and returned from database
+     * are selected and returned from database.
      *
      * @var array
      */
-    protected $default = ["id"];
+    protected $default = ['id'];
 
     /**
      * List of fields that are always hidden. Unless modified, these
      * fields are not visible when object is serialised. To comply with
      * Rest architecture, its recommended to hide all relation fields
-     * (like, user_id, student_id)
+     * (like, user_id, student_id).
      *
      * @var array
      */
-    protected $hidden = ["created_at", "updated_at", "pivot"];
+    protected $hidden = ['created_at', 'updated_at', 'pivot'];
 
     /**
      * List of fields on which filters are allowed to be applied. For security
-     * reasons we cannot allow filters to be allowed on arbitrary fields
-     * 
+     * reasons we cannot allow filters to be allowed on arbitrary fields.
+     *
      * @var array
      */
-    protected $filterable = ["id"];
+    protected $filterable = ['id'];
 
     /**
-     * List of relation attributes found during parsing of request, to be used during saving action
-     * 
+     * List of relation attributes found during parsing of request, to be used during saving action.
+     *
      * @var array
      */
     protected $relationAttributes = [];
@@ -51,14 +50,14 @@ class BaseModel extends Model
     protected $guarded = [];
 
     /**
-     * Raw attributes as sent in request. To be used in setters of various attributes
-     * 
+     * Raw attributes as sent in request. To be used in setters of various attributes.
+     *
      * @var array
      */
     protected $raw = [];
 
     /**
-     * Name of table of this model
+     * Name of table of this model.
      *
      * @return string
      */
@@ -68,7 +67,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Date fields in this model
+     * Date fields in this model.
      *
      * @return array
      */
@@ -79,7 +78,7 @@ class BaseModel extends Model
 
     /**
      * List of custom fields (attributes) that are appended by default
-     * ($appends array)
+     * ($appends array).
      *
      * @return array
      */
@@ -89,7 +88,7 @@ class BaseModel extends Model
     }
 
     /**
-     * List of fields to display by default ($defaults array)
+     * List of fields to display by default ($defaults array).
      *
      * @return array
      */
@@ -99,7 +98,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Return the $relationKeys array
+     * Return the $relationKeys array.
      *
      * @return mixed
      */
@@ -109,7 +108,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Returns list of fields on which filter is allowed to be applied
+     * Returns list of fields on which filter is allowed to be applied.
      *
      * @return array
      */
@@ -119,7 +118,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Checks if given relation exists on the model
+     * Checks if given relation exists on the model.
      *
      * @param $relation
      * @return bool
@@ -130,14 +129,14 @@ class BaseModel extends Model
     }
 
     /**
-     * Prepare a date for array / JSON serialization. Override base method in Model to suite our needs
+     * Prepare a date for array / JSON serialization. Override base method in Model to suite our needs.
      *
      * @param  \DateTime  $date
      * @return string
      */
     protected function serializeDate(\DateTimeInterface $date)
     {
-        return $date->format("c");
+        return $date->format('c');
     }
 
     /**
@@ -181,8 +180,7 @@ class BaseModel extends Model
         // Parse ISO 8061 date
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\\+(\d{2}):(\d{2})$/', $value)) {
             return Carbon::createFromFormat('Y-m-d\TH:i:s+P', $value);
-        }
-        elseif (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2}T(\d{2}):(\d{2}):(\d{2})\\.(\d{1,3})Z)$/', $value)) {
+        } elseif (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2}T(\d{2}):(\d{2}):(\d{2})\\.(\d{1,3})Z)$/', $value)) {
             return Carbon::createFromFormat('Y-m-d\TH:i:s.uZ', $value);
         }
 
@@ -232,14 +230,13 @@ class BaseModel extends Model
     {
         $this->raw = $attributes;
 
-        $excludes = [];//config("api.excludes");
+        $excludes = []; //config("api.excludes");
 
         foreach ($attributes as $key => $attribute) {
             // Guarded attributes should be removed
             if (in_array($key, $excludes)) {
                 unset($attributes[$key]);
-            }
-            else if (method_exists($this, $key) && ((is_array($attribute) || is_null($attribute)))) {
+            } elseif (method_exists($this, $key) && ((is_array($attribute) || is_null($attribute)))) {
                 // Its a relation
                 $this->relationAttributes[$key] = $attribute;
 
@@ -251,16 +248,15 @@ class BaseModel extends Model
 
                     if ($attribute !== null) {
                         // If key value is not set in request, we create new object
-                        if (!isset($attribute[$primaryKey])) {
+                        if (! isset($attribute[$primaryKey])) {
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
-                        else {
-                            $model = $relation->getRelated()->find($attribute[$primaryKey]);
 
-                            if (!$model) {
-                                // Resource not found
-                                throw new ResourceNotFoundException();
-                            }
+                        $model = $relation->getRelated()->find($attribute[$primaryKey]);
+
+                        if (! $model) {
+                            // Resource not found
+                            throw new ResourceNotFoundException();
                         }
                     }
 
@@ -288,16 +284,15 @@ class BaseModel extends Model
 
                 if ($relationAttribute !== null) {
                     // If key value is not set in request, we create new object
-                    if (!isset($relationAttribute[$primaryKey])) {
+                    if (! isset($relationAttribute[$primaryKey])) {
                         throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                     }
-                    else {
-                        $model = $relation->getRelated()->find($relationAttribute[$primaryKey]);
 
-                        if (!$model) {
-                            // Resource not found
-                            throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
-                        }
+                    $model = $relation->getRelated()->find($relationAttribute[$primaryKey]);
+
+                    if (! $model) {
+                        // Resource not found
+                        throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                     }
                 }
 
@@ -314,61 +309,56 @@ class BaseModel extends Model
         // Fill all other relations
         foreach ($this->relationAttributes as $key => $relationAttribute) {
             /** @var Relation $relation */
-            $relation = call_user_func([$this, $key]);
+            $relation   = call_user_func([$this, $key]);
             $primaryKey = $relation->getRelated()->getKeyName();
 
             if ($relation instanceof HasOne || $relation instanceof HasMany) {
-
                 if ($relation instanceof HasOne) {
                     $relationAttribute = [$relationAttribute];
                 }
 
-                $relationKey = explode(".", $relation->getQualifiedParentKeyName())[1];
+                $relationKey = explode('.', $relation->getQualifiedParentKeyName())[1];
 
                 foreach ($relationAttribute as $val) {
                     if ($val !== null) {
-                        if (!isset($val[$primaryKey])) {
+                        if (! isset($val[$primaryKey])) {
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
-                        else {
-                            /** @var Model $model */
-                            $model = $relation->getRelated()->find($val[$primaryKey]);
 
-                            if (!$model) {
-                                // Resource not found
-                                throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
-                            }
+                        /** @var Model $model */
+                        $model = $relation->getRelated()->find($val[$primaryKey]);
 
-                            // Only update relation key to attach $model to $this object
-                            $model->{$relationKey} = $this->getKey();
-                            $model->save();
+                        if (! $model) {
+                            // Resource not found
+                            throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
+
+                        // Only update relation key to attach $model to $this object
+                        $model->{$relationKey} = $this->getKey();
+                        $model->save();
                     }
                 }
-            }
-
-            else if ($relation instanceof BelongsToMany) {
+            } elseif ($relation instanceof BelongsToMany) {
                 $relatedIds = [];
 
                 // Value is an array of related models
                 foreach ($relationAttribute as $val) {
                     if ($val !== null) {
-                        if (!isset($val[$primaryKey])) {
+                        if (! isset($val[$primaryKey])) {
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
-                        else {
-                            /** @var Model $model */
-                            $model = $relation->getRelated()->find($val[$primaryKey]);
 
-                            if (!$model) {
-                                // Resource not found
-                                throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
-                            }
+                        /** @var Model $model */
+                        $model = $relation->getRelated()->find($val[$primaryKey]);
+
+                        if (! $model) {
+                            // Resource not found
+                            throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
                     }
 
                     if ($val !== null) {
-                       if(isset($val['pivot'])) {
+                        if (isset($val['pivot'])) {
                             // We have additional fields other than primary key
                             // that need to be saved to pivot table
                             /*
@@ -382,12 +372,11 @@ class BaseModel extends Model
                                 ]
                              */
                             $relatedIds[$model->getKey()] = $val['pivot'];
-                       }
-                       else {
+                        } else {
                             // We just have ids
                             $relatedIds[] = $model->getKey();
-                       }
-                   }
+                        }
+                    }
                 }
 
                 $relation->sync($relatedIds);

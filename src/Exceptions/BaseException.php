@@ -2,31 +2,31 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Exceptions;
 
-use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Http\Response;
+use Illuminate\Contracts\Support\Jsonable;
 
 class BaseException extends \Exception implements \JsonSerializable, Jsonable
 {
     /**
-     * Response status code
+     * Response status code.
      *
      * @var int
      */
     protected $statusCode = Response::HTTP_BAD_REQUEST;
 
     /**
-     * Error code
+     * Error code.
      *
      * @var int
      */
     protected $code = ErrorCodes::UNKNOWN_EXCEPTION;
 
     /**
-     * Error message
+     * Error message.
      *
      * @var string
      */
-    protected $message = "An unknown error occurred";
+    protected $message = 'An unknown error occurred';
 
     public function __construct($message = null, $previous = null, $code = null, $statusCode = null, $innerError = null, $details = [])
     {
@@ -42,14 +42,13 @@ class BaseException extends \Exception implements \JsonSerializable, Jsonable
             $this->innerError = $innerError;
         }
 
-        if (!empty($details)) {
+        if (! empty($details)) {
             $this->details = $details;
         }
 
         if ($message == null) {
             parent::__construct($this->message, $this->code, $previous);
-        }
-        else {
+        } else {
             parent::__construct($message, $this->code, $previous);
         }
     }
@@ -60,7 +59,7 @@ class BaseException extends \Exception implements \JsonSerializable, Jsonable
     }
 
     /**
-     * Return the status code the response should be sent with
+     * Return the status code the response should be sent with.
      *
      * @return int
      */
@@ -81,7 +80,7 @@ class BaseException extends \Exception implements \JsonSerializable, Jsonable
     }
 
     /**
-     * Specify data which should be serialized to JSON
+     * Specify data which should be serialized to JSON.
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
@@ -89,19 +88,19 @@ class BaseException extends \Exception implements \JsonSerializable, Jsonable
     public function jsonSerialize()
     {
         $jsonArray = [
-            "error" => [
-                "message" => $this->getMessage(),
-                "code" => $this->getCode()
-            ]
+            'error' => [
+                'message' => $this->getMessage(),
+                'code'    => $this->getCode(),
+            ],
         ];
 
         if (isset($this->details)) {
-            $jsonArray["error"]["details"] = $this->details;
+            $jsonArray['error']['details'] = $this->details;
         }
 
         if (isset($this->innerError)) {
-            $jsonArray["error"]["innererror"] = [
-                "code" => $this->innerError
+            $jsonArray['error']['innererror'] = [
+                'code' => $this->innerError,
             ];
         }
 

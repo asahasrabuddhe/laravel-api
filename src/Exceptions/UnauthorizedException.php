@@ -10,5 +10,5 @@ class UnauthorizedException extends ApiException
 
     protected $code = ErrorCodes::UNAUTHORIZED_EXCEPTION;
 
-    protected $message = "Not authorized to perform this request";
+    protected $message = 'Not authorized to perform this request';
 }

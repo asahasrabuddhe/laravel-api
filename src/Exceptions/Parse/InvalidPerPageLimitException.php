@@ -2,8 +2,8 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Exceptions\Parse;
 
-use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\ErrorCodes;
+use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
 
 class InvalidPerPageLimitException extends BaseException
 {
@@ -13,5 +13,5 @@ class InvalidPerPageLimitException extends BaseException
 
     protected $innercode = ErrorCodes::INVALID_LIMIT;
 
-    protected $message = "The per page limit cannot be negative or zero";
+    protected $message = 'The per page limit cannot be negative or zero';
 }
