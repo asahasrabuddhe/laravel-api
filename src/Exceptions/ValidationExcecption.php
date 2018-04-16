@@ -4,17 +4,16 @@ namespace Asahasrabuddhe\LaravelAPI\Exceptions;
 
 use Illuminate\Http\Response;
 
-class ValidationException extends BaseException
+class ValidationExcecption extends BaseException
 {
-
     protected $statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
 
     protected $code = ErrorCodes::VALIDATION_EXCEPTION;
 
-    protected $message = "Request could not be validated";
+    protected $message = 'Request could not be validated';
 
     /**
-     * Validation errors
+     * Validation errors.
      *
      * @var array
      */

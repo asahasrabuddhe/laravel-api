@@ -12,5 +12,5 @@ class RelatedResourceNotFoundException extends BaseException
 
     protected $innercode = ErrorCodes::INNER_RELATED_RESOURCE_NOT_EXISTS;
 
-    protected $message = "Related resource not found";
+    protected $message = 'Related resource not found';
 }

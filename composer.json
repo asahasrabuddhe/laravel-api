@@ -1,0 +1,26 @@
+{
+    "name": "asahasrabuddhe/laravel-api",
+    "description": "A package that makes developing APIs in Laravel (Lumen too) very very easy",
+    "authors": [
+        {
+            "name": "Ajitem Sahasrabuddhe",
+            "email": "ajitem.s@outlook.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Asahasrabuddhe\\LaravelAPI\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Asahasrabuddhe\\LaravelAPI\\Providers\\APIServiceProvider"
+            ],
+            "aliases": {
+                "ApiRoute": "Asahasrabuddhe\\LaravelAPI\\Facades\\ApiRoute"
+            }
+        }
+    }
+}

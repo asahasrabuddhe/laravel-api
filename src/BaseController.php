@@ -2,96 +2,90 @@
 
 namespace Asahasrabuddhe\LaravelAPI;
 
-use Asahasrabuddhe\LaravelAPI\RequestParser;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Routing\Controller;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class BaseController extends Controller
 {
-
     /**
-     * Full class reference to model this controller represents
+     * Full class reference to model this controller represents.
      *
      * @var string
      */
     protected $model = null;
 
     /**
-     * Table name corresponding to the model this controller is handling
+     * Table name corresponding to the model this controller is handling.
      *
      * @var string
      */
-
     private $table = null;
     /**
-     * Primary key of the model
+     * Primary key of the model.
      *
      * @var string
      */
     private $primaryKey = null;
 
     /**
-     * Default number of records to return
+     * Default number of records to return.
      *
      * @var int
      */
     protected $defaultLimit = 10;
 
     /**
-     * Maximum number of recorded allowed to be returned in single request
+     * Maximum number of recorded allowed to be returned in single request.
      *
      * @var int
      */
     protected $maxLimit = 1000;
 
     /**
-     * Query being built to fetch the results
+     * Query being built to fetch the results.
      *
      * @var Builder
      */
     private $query = null;
 
-
     /**
-     * Form request to validate index request
+     * Form request to validate index request.
      *
      * @var FormRequest
      */
     protected $indexRequest = null;
 
     /**
-     * Form request to validate store request
+     * Form request to validate store request.
      *
      * @var FormRequest
      */
     protected $storeRequest = null;
 
     /**
-     * Form request to validate show request
+     * Form request to validate show request.
      *
      * @var FormRequest
      */
     protected $showRequest = null;
 
     /**
-     * Form request to validate update request
+     * Form request to validate update request.
      *
      * @var FormRequest
      */
     protected $updateRequest = null;
 
     /**
-     * Form request to validate delete request
+     * Form request to validate delete request.
      *
      * @var FormRequest
      */
@@ -99,7 +93,7 @@ class BaseController extends Controller
 
     /**
      * Time when processing of this request started. Used
-     * to measure total processing time
+     * to measure total processing time.
      *
      * @var float
      */
@@ -107,11 +101,11 @@ class BaseController extends Controller
 
     /**
      * Fields to be excluded while saving a request. Fields not in excluded list
-     * are considered model attributes
+     * are considered model attributes.
      *
      * @var array
      */
-    protected $exclude = ["_token"];
+    protected $exclude = ['_token'];
 
     /**
      * @var RequestParser
@@ -126,17 +120,17 @@ class BaseController extends Controller
 
         if ($this->model) {
             // Only if model is defined. Otherwise, this is a normal controller
-            $this->primaryKey = call_user_func([new $this->model(), "getKeyName"]);
-            $this->table = call_user_func([new $this->model(), "getTable"]);
+            $this->primaryKey = call_user_func([new $this->model(), 'getKeyName']);
+            $this->table      = call_user_func([new $this->model(), 'getTable']);
         }
 
-        if (env("APP_DEBUG") == true) {
+        if (env('APP_DEBUG') == true) {
             \DB::enableQueryLog();
         }
     }
 
     /**
-     * Process index page request
+     * Process index page request.
      *
      * @return mixed
      */
@@ -159,7 +153,7 @@ class BaseController extends Controller
     }
 
     /**
-     * Process the show request
+     * Process the show request.
      *
      * @return mixed
      */
@@ -198,7 +192,7 @@ class BaseController extends Controller
         $object->fill(request()->all());
 
         // Run hook if exists
-        if(method_exists($this, 'storing')) {
+        if (method_exists($this, 'storing')) {
             $object = call_user_func([$this, 'storing'], $object);
         }
 
@@ -208,11 +202,11 @@ class BaseController extends Controller
 
         \DB::commit();
 
-        if(method_exists($this, 'stored')) {
+        if (method_exists($this, 'stored')) {
             call_user_func([$this, 'stored'], $object);
         }
 
-        return BaseResponse::make("Resource created successfully", [ "id" => $object->id ], $meta);
+        return BaseResponse::make('Resource created successfully', ['id' => $object->id], $meta);
     }
 
     public function update(...$args)
@@ -224,19 +218,19 @@ class BaseController extends Controller
         $this->validate();
 
         // Get object for update
-        $this->query = call_user_func($this->model . "::query");
+        $this->query = call_user_func($this->model . '::query');
         $this->modify();
 
         /** @var ApiModel $object */
         $object = $this->query->find($id);
 
-        if (!$object) {
+        if (! $object) {
             throw new ResourceNotFoundException();
         }
 
         $object->fill(request()->all());
 
-        if(method_exists($this, 'updating')) {
+        if (method_exists($this, 'updating')) {
             $object = call_user_func([$this, 'updating'], $object);
         }
 
@@ -246,11 +240,11 @@ class BaseController extends Controller
 
         \DB::commit();
 
-        if(method_exists($this, 'updated')) {
+        if (method_exists($this, 'updated')) {
             call_user_func([$this, 'updated'], $object);
         }
 
-        return BaseResponse::make("Resource updated successfully", [ "id" => $object->id ], $meta);
+        return BaseResponse::make('Resource updated successfully', ['id' => $object->id], $meta);
     }
 
     public function destroy(...$args)
@@ -262,17 +256,17 @@ class BaseController extends Controller
         $this->validate();
 
         // Get object for update
-        $this->query = call_user_func($this->model . "::query");
+        $this->query = call_user_func($this->model . '::query');
         $this->modify();
 
         /** @var Model $object */
         $object = $this->query->find($id);
 
-        if (!$object) {
+        if (! $object) {
             throw new ResourceNotFoundException();
         }
 
-        if(method_exists($this, 'destroying')) {
+        if (method_exists($this, 'destroying')) {
             $object = call_user_func([$this, 'destroyed'], $object);
         }
 
@@ -282,11 +276,11 @@ class BaseController extends Controller
 
         \DB::commit();
 
-        if(method_exists($this, 'destroyed')) {
+        if (method_exists($this, 'destroyed')) {
             call_user_func([$this, 'destroyed'], $object);
         }
 
-        return BaseResponse::make("Resource deleted successfully", null, $meta);
+        return BaseResponse::make('Resource deleted successfully', null, $meta);
     }
 
     public function relation($id, $relation)
@@ -296,9 +290,9 @@ class BaseController extends Controller
         // To show relations, we just make a new fields parameter, which requests
         // only object id, and the relation and get the results like normal index request
 
-        $fields = "id," . $relation . ".limit(" . ((request()->limit) ? request()->limit : $this->defaultLimit) .
-            ")" . ((request()->offset) ?  ".offset(" . request()->offset . ")": "" )
-            . ((request()->fields) ? "{" .request()->fields . "}" : "");
+        $fields = 'id,' . $relation . '.limit(' . ((request()->limit) ? request()->limit : $this->defaultLimit) .
+            ')' . ((request()->offset) ? '.offset(' . request()->offset . ')' : '')
+            . ((request()->fields) ? '{' .request()->fields . '}' : '');
 
         request()->fields = $fields;
 
@@ -315,7 +309,6 @@ class BaseController extends Controller
         $meta = $this->getMetaData(true);
 
         return BaseResponse::make(null, $data, $meta);
-
     }
 
     protected function parseRequest()
@@ -327,26 +320,19 @@ class BaseController extends Controller
 
     protected function validate()
     {
-
         if ($this->isIndex()) {
             $requestClass = $this->indexRequest;
-        }
-        else if ($this->isShow()) {
+        } elseif ($this->isShow()) {
             $requestClass = $this->showRequest;
-        }
-        else if ($this->isUpdate()) {
+        } elseif ($this->isUpdate()) {
             $requestClass = $this->updateRequest;
-        }
-        else if ($this->isDelete()) {
+        } elseif ($this->isDelete()) {
             $requestClass = $this->deleteRequest;
-        }
-        else if ($this->isStore()) {
+        } elseif ($this->isStore()) {
             $requestClass = $this->storeRequest;
-        }
-        else if ($this->isRelation()) {
+        } elseif ($this->isRelation()) {
             $requestClass = $this->indexRequest;
-        }
-        else {
+        } else {
             $requestClass = null;
         }
 
@@ -357,50 +343,47 @@ class BaseController extends Controller
     }
 
     /**
-     * Looks for relations in the requested fields and adds with query for them
+     * Looks for relations in the requested fields and adds with query for them.
      *
      * @return $this current controller object for chain method calling
      */
     protected function addIncludes()
     {
-
         $relations = $this->parser->getRelations();
 
-        if (!empty($relations)) {
+        if (! empty($relations)) {
             $includes = [];
 
             foreach ($relations as $key => $relation) {
                 $includes[$key] = function (Relation $q) use ($relation, $key) {
-
                     $relations = $this->parser->getRelations();
 
-                    $tableName = $q->getRelated()->getTable();
+                    $tableName  = $q->getRelated()->getTable();
                     $primaryKey = $q->getRelated()->getKeyName();
 
-                    if ($relation["userSpecifiedFields"]) {
+                    if ($relation['userSpecifiedFields']) {
                         // Prefix table name so that we do not get ambiguous column errors
-                        $fields = $relation["fields"];
-                    }
-                    else {
+                        $fields = $relation['fields'];
+                    } else {
                         // Add default fields, if no fields specified
                         $related = $q->getRelated();
 
-                        $fields = call_user_func(get_class($related) . "::getDefaultFields");
-                        $fields = array_merge($fields, $relation["fields"]);
+                        $fields = call_user_func(get_class($related) . '::getDefaultFields');
+                        $fields = array_merge($fields, $relation['fields']);
 
-                        $relations[$key]["fields"] = $fields;
+                        $relations[$key]['fields'] = $fields;
                     }
 
                     // Remove appends from select
-                    $appends = call_user_func(get_class($q->getRelated()) . "::getAppendFields");
-                    $relations[$key]["appends"] = $appends;
+                    $appends                    = call_user_func(get_class($q->getRelated()) . '::getAppendFields');
+                    $relations[$key]['appends'] = $appends;
 
-                    if (!in_array($primaryKey, $fields)) {
+                    if (! in_array($primaryKey, $fields)) {
                         $fields[] = $primaryKey;
                     }
 
-                    $fields = array_map(function($name) use($tableName) {
-                        return $tableName . "." . $name;
+                    $fields = array_map(function ($name) use ($tableName) {
+                        return $tableName . '.' . $name;
                     }, array_diff($fields, $appends));
 
                     if ($q instanceof BelongsToMany) {
@@ -409,60 +392,57 @@ class BaseController extends Controller
                         // to make them work
                         $innerQuery = $q->getQuery();
                         $innerQuery->select($fields);
-                        $innerQuery->selectRaw("@currcount := IF(@currvalue = " . $q->getQualifiedForeignPivotKeyName() . ", @currcount + 1, 1) AS rank");
-                        $innerQuery->selectRaw("@currvalue := " . $q->getQualifiedForeignPivotKeyName() . " AS whatever");
-                        $innerQuery->orderBy($q->getQualifiedForeignPivotKeyName(), ($relation["order"] == "chronological") ? "ASC" : "DESC");
+                        $innerQuery->selectRaw('@currcount := IF(@currvalue = ' . $q->getQualifiedForeignPivotKeyName() . ', @currcount + 1, 1) AS rank');
+                        $innerQuery->selectRaw('@currvalue := ' . $q->getQualifiedForeignPivotKeyName() . ' AS whatever');
+                        $innerQuery->orderBy($q->getQualifiedForeignPivotKeyName(), ($relation['order'] == 'chronological') ? 'ASC' : 'DESC');
 
                         // Inner Join causes issues when a relation for parent does not exist.
                         // So, we change it to right join for this query
-                        $innerQuery->getQuery()->joins[0]->type = "right";
+                        $innerQuery->getQuery()->joins[0]->type = 'right';
 
                         $outerQuery = $q->newPivotStatement();
-                        $outerQuery->from(\DB::raw("(". $innerQuery->toSql() . ") as `$tableName`"))
+                        $outerQuery->from(\DB::raw('('. $innerQuery->toSql() . ") as `$tableName`"))
                             ->mergeBindings($innerQuery->getQuery());
 
                         $q->select($fields)
-                            ->join(\DB::raw("(" . $outerQuery->toSql() . ") as `outer_query`"), function ($join) use($q) {
-                                $join->on("outer_query.id", "=", $q->getQualifiedRelatedPivotKeyName ());
-                                $join->on("outer_query.whatever", "=", $q->getQualifiedForeignPivotKeyName());
+                            ->join(\DB::raw('(' . $outerQuery->toSql() . ') as `outer_query`'), function ($join) use ($q) {
+                                $join->on('outer_query.id', '=', $q->getQualifiedRelatedPivotKeyName());
+                                $join->on('outer_query.whatever', '=', $q->getQualifiedForeignPivotKeyName());
                             })
                             ->setBindings(array_merge($q->getQuery()->getBindings(), $outerQuery->getBindings()))
-                            ->where("rank", "<=", $relation["limit"] + $relation["offset"])
-                            ->where("rank", ">", $relation["offset"]);
-                    }
-                    else {
+                            ->where('rank', '<=', $relation['limit'] + $relation['offset'])
+                            ->where('rank', '>', $relation['offset']);
+                    } else {
                         // We need to select foreign key so that Laravel can match to which records these
                         // need to be attached
                         if ($q instanceof BelongsTo) {
                             $fields[] = $q->getOwnerKey();
 
-                            if (strpos($key, ".") !== false) {
-                                $parts = explode(".", $key);
+                            if (strpos($key, '.') !== false) {
+                                $parts = explode('.', $key);
                                 array_pop($parts);
 
-                                $relation["limit"] = $relations[implode(".", $parts)]["limit"];
+                                $relation['limit'] = $relations[implode('.', $parts)]['limit'];
                             }
-                        }
-                        else if ($q instanceof HasOne) {
+                        } elseif ($q instanceof HasOne) {
                             $fields[] = $q->getQualifiedForeignKeyName();
 
                             // This will be used to hide this foreign key field
                             // in the processAppends function later
-                            $relations[$key]["foreign"] = $q->getQualifiedForeignKeyName();
-                        }
-                        else if ($q instanceof HasMany) {
-                            $fields[] = $q->getQualifiedForeignKeyName();
-                            $relations[$key]["foreign"] = $q->getQualifiedForeignKeyName();
+                            $relations[$key]['foreign'] = $q->getQualifiedForeignKeyName();
+                        } elseif ($q instanceof HasMany) {
+                            $fields[]                   = $q->getQualifiedForeignKeyName();
+                            $relations[$key]['foreign'] = $q->getQualifiedForeignKeyName();
 
-                            $q->orderBy($primaryKey, ($relation["order"] == "chronological") ? "ASC" : "DESC");
+                            $q->orderBy($primaryKey, ($relation['order'] == 'chronological') ? 'ASC' : 'DESC');
                         }
 
                         $q->select($fields);
 
-                        $q->take($relation["limit"]);
+                        $q->take($relation['limit']);
 
-                        if ($relation["offset"] !== 0) {
-                            $q->skip($relation["offset"]);
+                        if ($relation['offset'] !== 0) {
+                            $q->skip($relation['offset']);
                         }
                     }
 
@@ -470,10 +450,9 @@ class BaseController extends Controller
                 };
             }
 
-            $this->query = call_user_func($this->model."::with", $includes);
-        }
-        else {
-            $this->query = call_user_func($this->model."::query");
+            $this->query = call_user_func($this->model.'::with', $includes);
+        } else {
+            $this->query = call_user_func($this->model.'::query');
         }
 
         return $this;
@@ -482,14 +461,13 @@ class BaseController extends Controller
     /**
      * Add requested filters. Filters are defined similar to normal SQL queries like
      * (name eq "Milk" or name eq "Eggs") and price lt 2.55
-     * The string should be enclosed in double quotes
+     * The string should be enclosed in double quotes.
      * @return $this
      * @throws NotAllowedToFilterOnThisFieldException
      */
     protected function addFilters()
     {
         if ($this->parser->getFilters()) {
-
             $this->query->whereRaw($this->parser->getFilters());
         }
 
@@ -497,7 +475,7 @@ class BaseController extends Controller
     }
 
     /**
-     * Add sorting to the query. Sorting is similar to SQL queries
+     * Add sorting to the query. Sorting is similar to SQL queries.
      *
      * @return $this
      */
@@ -511,19 +489,18 @@ class BaseController extends Controller
     }
 
     /**
-     * Adds paging limit and offset to SQL query
+     * Adds paging limit and offset to SQL query.
      *
      * @return $this
      */
     protected function addPaging()
     {
-        $limit = $this->parser->getLimit();
+        $limit  = $this->parser->getLimit();
         $offset = $this->parser->getOffset();
 
         if ($offset <= 0) {
             $skip = 0;
-        }
-        else {
+        } else {
             $skip = $offset;
         }
 
@@ -537,13 +514,13 @@ class BaseController extends Controller
     protected function addKeyConstraint($id)
     {
         // Add equality constraint
-        $this->query->where($this->table . "." . ($this->primaryKey), "=", $id);
+        $this->query->where($this->table . '.' . ($this->primaryKey), '=', $id);
 
         return $this;
     }
 
     /**
-     * Runs query and fetches results
+     * Runs query and fetches results.
      *
      * @param bool $single
      * @return Collection
@@ -551,7 +528,7 @@ class BaseController extends Controller
      */
     protected function getResults($single = false)
     {
-        $customAttributes = call_user_func($this->model."::getAppendFields");
+        $customAttributes = call_user_func($this->model.'::getAppendFields');
 
         // Laravel's $appends adds attributes always to the output. With this method,
         // we can specify which attributes are to be included
@@ -563,20 +540,18 @@ class BaseController extends Controller
             if (in_array($field, $customAttributes)) {
                 $appends[] = $field;
                 unset($fields[$key]);
-            }
-            else {
+            } else {
                 // Add table name to  fields to prevent ambiguous column issues
-                $fields[$key] = $this->table . "." . $field;
+                $fields[$key] = $this->table . '.' . $field;
             }
         }
 
         $this->parser->setFields($fields);
 
-        if (!$single) {
+        if (! $single) {
             /** @var Collection $results */
             $results = $this->query->select($fields)->get();
-        }
-        else {
+        } else {
             /** @var Collection $results */
             $results = $this->query->select($fields)->skip(0)->take(1)->get();
 
@@ -585,7 +560,7 @@ class BaseController extends Controller
             }
         }
 
-        foreach($results as $result) {
+        foreach ($results as $result) {
             $result->setAppends($appends);
         }
 
@@ -600,48 +575,44 @@ class BaseController extends Controller
     {
         if (! ($models instanceof Collection)) {
             return $models;
-        }
-        else if ($models->count() == 0) {
+        } elseif ($models->count() == 0) {
             return $models;
         }
 
         // Attribute at $key is a relation
-        $first = $models->first();
+        $first         = $models->first();
         $attributeKeys = array_keys($first->getRelations());
-        $relations = $this->parser->getRelations();
+        $relations     = $this->parser->getRelations();
 
         foreach ($attributeKeys as $key) {
-            $relationName = ($parent === null) ? $key : $parent . "." . $key;
+            $relationName = ($parent === null) ? $key : $parent . '.' . $key;
 
             if (isset($relations[$relationName])) {
+                $appends = $relations[$relationName]['appends'];
+                $appends = array_intersect($appends, $relations[$relationName]['fields']);
 
-                $appends = $relations[$relationName]["appends"];
-                $appends = array_intersect($appends, $relations[$relationName]["fields"]);
-
-                if (isset($relations[$relationName]["foreign"])) {
-                    $foreign = explode(".", $relations[$relationName]["foreign"])[1];
-                }
-                else {
+                if (isset($relations[$relationName]['foreign'])) {
+                    $foreign = explode('.', $relations[$relationName]['foreign'])[1];
+                } else {
                     $foreign = null;
                 }
 
                 foreach ($models as $model) {
                     if ($model->$key instanceof Collection) {
-                        $model->{$key}->each(function ($item, $key) use($appends, $foreign) {
+                        $model->{$key}->each(function ($item, $key) use ($appends, $foreign) {
                             $item->setAppends($appends);
 
                             // Hide the foreign key fields
-                            if (!empty($foreign)) {
+                            if (! empty($foreign)) {
                                 $item->addHidden($foreign);
                             }
                         });
 
                         $this->processAppends($model->$key, $key);
-                    }
-                    else if (!empty($model->$key)) {
+                    } elseif (! empty($model->$key)) {
                         $model->$key->setAppends($appends);
 
-                        if (!empty($foreign)) {
+                        if (! empty($foreign)) {
                             $model->$key->addHidden($foreign);
                         }
 
@@ -653,21 +624,21 @@ class BaseController extends Controller
     }
 
     /**
-     * Builds metadata - paging, links, time to complete request, etc
+     * Builds metadata - paging, links, time to complete request, etc.
      *
      * @return array
      */
     protected function getMetaData($single = false)
     {
-        if (!$single) {
+        if (! $single) {
             $meta = [
-                "paging" => [
-                    "links" => [
+                'paging' => [
+                    'links' => [
 
-                    ]
-                ]
+                    ],
+                ],
             ];
-            $limit = $this->parser->getLimit();
+            $limit      = $this->parser->getLimit();
             $pageOffset = $this->parser->getOffset();
 
             $current = $pageOffset;
@@ -679,29 +650,29 @@ class BaseController extends Controller
 
             $this->query->offset(0);
 
-            $totalRecords = $this->query->count($this->table . "." . $this->primaryKey);
+            $totalRecords = $this->query->count($this->table . '.' . $this->primaryKey);
 
             $this->query->offset($offset);
 
-            $meta["paging"]["total"] = $totalRecords;
+            $meta['paging']['total'] = $totalRecords;
 
-            if (($current + $limit) < $meta["paging"]["total"]) {
-                $meta["paging"]["links"]["next"] = $this->getNextLink();
+            if (($current + $limit) < $meta['paging']['total']) {
+                $meta['paging']['links']['next'] = $this->getNextLink();
             }
 
             if ($current >= $limit) {
-                $meta["paging"]["links"]["previous"] = $this->getPreviousLink();
+                $meta['paging']['links']['previous'] = $this->getPreviousLink();
             }
         }
 
-        $meta["time"] = round(microtime(true) - $this->processingStartTime, 3);
+        $meta['time'] = round(microtime(true) - $this->processingStartTime, 3);
 
-        if (env("APP_DEBUG") == true) {
+        if (env('APP_DEBUG') == true) {
             $log = \DB::getQueryLog();
             \DB::disableQueryLog();
 
-            $meta["queries"] = count($log);
-           $meta["queries_list"] = $log;
+            $meta['queries']      = count($log);
+            $meta['queries_list'] = $log;
         }
 
         return $meta;
@@ -710,110 +681,107 @@ class BaseController extends Controller
     protected function getPreviousLink()
     {
         $offset = $this->parser->getOffset();
-        $limit = $this->parser->getLimit();
+        $limit  = $this->parser->getLimit();
 
-        $queryString = ((request()->fields) ? "&fields=" . urlencode(request()->fields) : "") .
-            ((request()->filters) ? "&filters=" . urlencode(request()->filters) : "") .
-            ((request()->order) ? "&fields=" . urlencode(request()->order) : "");
+        $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
+            ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
+            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
 
-        $queryString .= "&offset=" . ($offset - $limit);
+        $queryString .= '&offset=' . ($offset - $limit);
 
-        return request()->url() . "?" . trim($queryString, "&");
+        return request()->url() . '?' . trim($queryString, '&');
     }
 
     protected function getNextLink()
     {
         $offset = $this->parser->getOffset();
-        $limit = $this->parser->getLimit();
+        $limit  = $this->parser->getLimit();
 
-        $queryString = ((request()->fields) ? "&fields=" . urlencode(request()->fields) : "") .
-            ((request()->filters) ? "&filters=" . urlencode(request()->filters) : "") .
-            ((request()->order) ? "&fields=" . urlencode(request()->order) : "");
+        $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
+            ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
+            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
 
-        $queryString .= "&offset=" . ($offset + $limit);
+        $queryString .= '&offset=' . ($offset + $limit);
 
-        return request()->url() . "?" . trim($queryString, "&");
+        return request()->url() . '?' . trim($queryString, '&');
     }
 
     /**
-     * Checks if current request is index request
+     * Checks if current request is index request.
      * @return bool
      */
     protected function isIndex()
     {
-        return in_array("index", explode(".", request()->route()->getName()));
+        return in_array('index', explode('.', request()->route()->getName()));
     }
 
     /**
-     * Checks if current request is create request
+     * Checks if current request is create request.
      * @return bool
      */
     protected function isCreate()
     {
-        return in_array("create", explode(".", request()->route()->getName()));
+        return in_array('create', explode('.', request()->route()->getName()));
     }
 
     /**
-     * Checks if current request is show request
+     * Checks if current request is show request.
      * @return bool
      */
     protected function isShow()
     {
-        return in_array("show", explode(".", request()->route()->getName()));
+        return in_array('show', explode('.', request()->route()->getName()));
     }
 
     /**
-     * Checks if current request is update request
+     * Checks if current request is update request.
      * @return bool
      */
     protected function isUpdate()
     {
-        return in_array("update", explode(".", request()->route()->getName()));
+        return in_array('update', explode('.', request()->route()->getName()));
     }
 
     /**
-     * Checks if current request is delete request
+     * Checks if current request is delete request.
      * @return bool
      */
     protected function isDelete()
     {
-        return in_array("destroy", explode(".", request()->route()->getName()));
+        return in_array('destroy', explode('.', request()->route()->getName()));
     }
 
     /**
-     * Checks if current request is store request
+     * Checks if current request is store request.
      * @return bool
      */
     protected function isStore()
     {
-        return in_array("store", explode(".", request()->route()->getName()));
+        return in_array('store', explode('.', request()->route()->getName()));
     }
-    
+
     /**
-     * Checks if current request is relation request
+     * Checks if current request is relation request.
      * @return bool
      */
     protected function isRelation()
     {
-        return in_array("relation", explode(".", request()->route()->getName()));
+        return in_array('relation', explode('.', request()->route()->getName()));
     }
 
     /**
-     * Calls the modifyRequestType methods to modify query just before execution
+     * Calls the modifyRequestType methods to modify query just before execution.
      * @return $this
      */
     private function modify()
     {
         if ($this->isIndex()) {
             $this->query = $this->modifyIndex($this->query);
-        }
-        else if ($this->isShow()) {
+        } elseif ($this->isShow()) {
             $this->query = $this->modifyShow($this->query);
-        }
-        else if ($this->isDelete()) {
+        } elseif ($this->isDelete()) {
             $this->query = $this->modifyDelete($this->query);
-        }
-        else if ($this->isUpdate()) {
+        } elseif ($this->isUpdate()) {
             $this->query = $this->modifyUpdate($this->query);
         }
 
@@ -821,7 +789,7 @@ class BaseController extends Controller
     }
 
     /**
-     * Modify the query for show request
+     * Modify the query for show request.
      * @param $query
      * @return mixed
      */
@@ -831,7 +799,7 @@ class BaseController extends Controller
     }
 
     /**
-     * Modify the query for update request
+     * Modify the query for update request.
      * @param $query
      * @return mixed
      */
@@ -841,7 +809,7 @@ class BaseController extends Controller
     }
 
     /**
-     * Modify the query for delete request
+     * Modify the query for delete request.
      * @param $query
      * @return mixed
      */
@@ -851,7 +819,7 @@ class BaseController extends Controller
     }
 
     /**
-     * Modify the query for index request
+     * Modify the query for index request.
      * @param $query
      * @return mixed
      */
@@ -860,11 +828,13 @@ class BaseController extends Controller
         return $query;
     }
 
-    protected function getQuery() {
+    protected function getQuery()
+    {
         return $this->query;
     }
 
-    protected function setQuery($query) {
+    protected function setQuery($query)
+    {
         $this->query = $query;
     }
 
