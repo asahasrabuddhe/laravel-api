@@ -3,22 +3,20 @@
 namespace Asahasrabuddhe\LaravelAPI\Console\Commands;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Asahasrabuddhe\LaravelAPI\Console\Commands\Creators\ModelCreator;
 
 class MakeModelCommand extends Command
 {
     /**
-     * The name and signature of the console command
-     * 
+     * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'make:api:model {name} {--auth=false}';
 
     /**
-     * The console command description
-     * 
+     * The console command description.
+     *
      * @var string
      */
     protected $description = 'Creates a new Eloquent model class with support for Laravel API package.';

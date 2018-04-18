@@ -54,11 +54,11 @@ class ExceptionHandler extends Handler
                 }
 
                 return Response::exception(new BaseException(null, $e));
-            } else {
-                return Response::exception(new BaseException(null, $e));
             }
-        } else {
-            return parent::render($request, $e);
+
+            return Response::exception(new BaseException(null, $e));
         }
+
+        return parent::render($request, $e);
     }
 }

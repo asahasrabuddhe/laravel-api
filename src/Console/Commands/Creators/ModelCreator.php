@@ -2,7 +2,6 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Console\Commands\Creators;
 
-use Doctrine\Common\Inflector\Inflector;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 
@@ -117,7 +116,7 @@ class ModelCreator
     protected function getPopulateData()
     {
         // Model namespace.
-        $model_namespace = 'App';//Config::get('repositories.model_namespace');
+        $model_namespace = 'App'; //Config::get('repositories.model_namespace');
         // Model class.
         $model_class = $this->getModel();
         // Populate data.
@@ -150,10 +149,11 @@ class ModelCreator
     protected function getStub()
     {
         // Stub
-        if( $this->getAuth() )
+        if ($this->getAuth()) {
             $stub = $this->files->get($this->getStubPath().'model.auth.stub.php');
-        else
+        } else {
             $stub = $this->files->get($this->getStubPath().'model.stub.php');
+        }
         // Return stub.
         return $stub;
     }
