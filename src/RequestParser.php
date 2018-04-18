@@ -276,7 +276,6 @@ class RequestParser
                 $where = preg_replace_callback_array([
                     static::OPERATOR_REGEX => [$this, 'replaceOperators'],
                 ], $where);
-
                 $this->filters = $where;
             } else {
                 throw new InvalidFilterDefinitionException();
@@ -318,7 +317,7 @@ class RequestParser
 
     protected function replaceOperators($matches)
     {
-        switch ($matches[0]) {
+        switch (trim($matches[0])) {
             case 'eq':
                 return ' = ';
             case 'ne':
