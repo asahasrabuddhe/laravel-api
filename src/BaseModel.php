@@ -23,7 +23,7 @@ class BaseModel extends Model
     protected $default = ['id'];
 
     /**
-     * Full class reference to a resource that this model is to be transformed into
+     * Full class reference to a resource that this model is to be transformed into.
      *
      * @var string
      */
@@ -104,9 +104,6 @@ class BaseModel extends Model
         return (new static)->default;
     }
 
-    /**
-     * 
-     */
     public static function getResource()
     {
         return (new static)->resource;
