@@ -1,5 +1,7 @@
 <?php
+
 namespace model_namespace;
+
 use Asahasrabuddhe\LaravelAPI\BaseModel as Model;
 //use App\Http\Resources\model_classResource;
 /**

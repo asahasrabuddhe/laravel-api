@@ -2,7 +2,6 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Console\Commands\Creators;
 
-use Doctrine\Common\Inflector\Inflector;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 

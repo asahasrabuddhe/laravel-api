@@ -1,5 +1,7 @@
 <?php
+
 namespace model_namespace;
+
 use Asahasrabuddhe\LaravelAPI\BaseUser as Authenticatable;
 //use App\Http\Resources\model_classResource;
 /**
