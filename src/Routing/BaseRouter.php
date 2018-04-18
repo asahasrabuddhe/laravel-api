@@ -4,7 +4,7 @@ namespace Asahasrabuddhe\LaravelAPI\Routing;
 
 use Closure;
 use Illuminate\Routing\Router;
-use Illuminate\Routing\ResourceRegistrar;
+use Asahasrabuddhe\LaravelAPI\Routing\ResourceRegistrar;
 use Asahasrabuddhe\LaravelAPI\Middleware\BaseMiddleware;
 
 class BaseRouter extends Router
@@ -26,7 +26,7 @@ class BaseRouter extends Router
         } else {
             $registrar = new ResourceRegistrar($this);
         }
-
+        
         $registrar->register($name, $controller, $options);
     }
 
