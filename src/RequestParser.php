@@ -262,7 +262,7 @@ class RequestParser
                 // Look for parser token type T_STRING (319)
                 if( isset($token[0]) && $token[0] == 319 ) {
                     // ignore parser token representing name of the function
-                    if( $token[1] == 'toArray' )
+                    if( $token[1] == 'toArray' || $token[1] == 'parent' )
                         continue;
                     $fields[] = $token[1]; // save the field name returned in fields array
                 }
