@@ -23,6 +23,13 @@ class BaseModel extends Model
     protected $default = ['id'];
 
     /**
+     * Full class reference to a resource that this model is to be transformed into
+     *
+     * @var string
+     */
+    protected $resource = null;
+
+    /**
      * List of fields that are always hidden. Unless modified, these
      * fields are not visible when object is serialised. To comply with
      * Rest architecture, its recommended to hide all relation fields
@@ -95,6 +102,14 @@ class BaseModel extends Model
     public static function getDefaultFields()
     {
         return (new static)->default;
+    }
+
+    /**
+     * 
+     */
+    public static function getResource()
+    {
+        return (new static)->resource;
     }
 
     /**
