@@ -46,11 +46,11 @@ class ControllerCreator
     public function setController($controller)
     {
         $path = explode('/', $controller);
-        if(count($path) > 1) {
-            $this->controller = ucfirst(array_pop($path));
+        if (count($path) > 1) {
+            $this->controller      = ucfirst(array_pop($path));
             $this->directorySuffix = '/'. implode('/', $path);
         } else {
-            $this->controller = ucfirst($path[0]);
+            $this->controller      = ucfirst($path[0]);
             $this->directorySuffix = '';
         }
         $this->namespacePrefix = str_replace('/', '\\', $this->directorySuffix);
@@ -105,13 +105,13 @@ class ControllerCreator
     protected function getPopulateData()
     {
         // Controller namespace.
-        $controller_namespace = 'App\Http\Controllers' . $this->namespacePrefix;//Config::get('repositories.controller_namespace');
+        $controller_namespace = 'App\Http\Controllers' . $this->namespacePrefix; //Config::get('repositories.controller_namespace');
         // Controller class.
         $controller_class = $this->getControllerName();
         // Populate data.
         $populate_data = [
             'controller_namespace' => $controller_namespace,
-            'controller_name'     => $controller_class,
+            'controller_name'      => $controller_class,
         ];
         // Return populate data.
         return $populate_data;
