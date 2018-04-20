@@ -13,7 +13,7 @@ class MakeControllerCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:api:controller';
+    protected $signature = 'make:api:controller {name}';
 
     /**
      * The console command description.
@@ -53,10 +53,8 @@ class MakeControllerCommand extends Command
     {
         // Get the arguments.
         $arguments = $this->argument();
-        // Get the options.
-        $options = $this->option();
-        // Write repository.
-        $this->writeRepository($arguments, $options);
+        // Write controller.
+        $this->writeController($arguments);
         // Dump autoload.
         $this->composer->dumpAutoloads();
     }
@@ -65,28 +63,14 @@ class MakeControllerCommand extends Command
      * @param $arguments
      * @param $options
      */
-    protected function writeRepository($arguments, $options)
+    protected function writeController($arguments)
     {
-        // Set repository.
-        $repository = $arguments['repository'];
-        // Set model.
-        $model = $options['auth'];
-        // Create the repository.
-        if ($this->creator->create($repository, $model)) {
+        // Set controller.
+        $controller = $arguments['name'];
+        // Create the controller.
+        if ($this->creator->create($controller)) {
             // Information message.
-            $this->info('Successfully created the repository class');
+            $this->info('Successfully created the controller class');
         }
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['name', InputArgument::REQUIRED, 'The name of the Controller.'],
-        ];
     }
 }
