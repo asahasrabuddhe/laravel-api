@@ -3,7 +3,6 @@
 namespace Asahasrabuddhe\LaravelAPI\Console\Commands;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Asahasrabuddhe\LaravelAPI\Console\Commands\Creators\ControllerCreator;
 
 class MakeControllerCommand extends Command

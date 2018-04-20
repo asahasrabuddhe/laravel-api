@@ -51,11 +51,11 @@ class ModelCreator
     public function setModel($model)
     {
         $path = explode('/', $model);
-        if(count($path) > 1) {
-            $this->model = ucfirst(array_pop($path));
+        if (count($path) > 1) {
+            $this->model           = ucfirst(array_pop($path));
             $this->directorySuffix = '/'. implode('/', $path);
         } else {
-            $this->model = ucfirst($path[0]);
+            $this->model           = ucfirst($path[0]);
             $this->directorySuffix = '';
         }
         $this->namespacePrefix = str_replace('/', '\\', $this->directorySuffix);
