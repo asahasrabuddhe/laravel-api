@@ -46,7 +46,7 @@ class ModelCreator
      */
     public function setModel($model)
     {
-        $this->model = $model;
+        $this->model = ucfirst($model);
     }
 
     /**
