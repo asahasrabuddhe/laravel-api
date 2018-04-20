@@ -20,6 +20,10 @@ class ControllerCreator
      */
     protected $controller;
 
+    protected $directorySuffix;
+
+    protected $namespacePrefix;
+
     /**
      * @param Filesystem $files
      */
@@ -31,9 +35,9 @@ class ControllerCreator
     /**
      * @return mixed
      */
-    public function getController()
+    public function getControllerName()
     {
-        return $this->controller;
+        return str_replace('Controller', '', $this->controller);
     }
 
     /**
@@ -41,7 +45,15 @@ class ControllerCreator
      */
     public function setController($controller)
     {
-        $this->controller = $controller;
+        $path = explode('/', $controller);
+        if(count($path) > 1) {
+            $this->controller = ucfirst(array_pop($path));
+            $this->directorySuffix = '/'. implode('/', $path);
+        } else {
+            $this->controller = ucfirst($path[0]);
+            $this->directorySuffix = '';
+        }
+        $this->namespacePrefix = str_replace('/', '\\', $this->directorySuffix);
     }
 
     /**
@@ -77,10 +89,10 @@ class ControllerCreator
      *
      * @return mixed
      */
-    protected function getDirectory()
+    protected function getDirectory($path = '')
     {
         // Get the directory from the config file.
-        $directory = app_path();
+        $directory = app_path('Http/Controllers/' . $this->directorySuffix);
         // Return the directory.
         return $directory;
     }
@@ -93,13 +105,13 @@ class ControllerCreator
     protected function getPopulateData()
     {
         // Controller namespace.
-        $controller_namespace = Config::get('repositories.controller_namespace');
+        $controller_namespace = 'App\Http\Controllers' . $this->namespacePrefix;//Config::get('repositories.controller_namespace');
         // Controller class.
         $controller_class = $this->getControllerName();
         // Populate data.
         $populate_data = [
             'controller_namespace' => $controller_namespace,
-            'controller_class'     => $controller_class,
+            'controller_name'     => $controller_class,
         ];
         // Return populate data.
         return $populate_data;
@@ -113,7 +125,7 @@ class ControllerCreator
     protected function getPath()
     {
         // Path.
-        $path = $this->getDirectory().DIRECTORY_SEPARATOR.$this->getControllerName().'.php';
+        $path = $this->getDirectory().DIRECTORY_SEPARATOR.$this->getControllerName().'Controller.php';
         // return path.
         return $path;
     }
