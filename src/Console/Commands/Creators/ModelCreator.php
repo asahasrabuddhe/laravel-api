@@ -161,7 +161,7 @@ class ModelCreator
     protected function getStub()
     {
         // Stub
-        if ($this->getAuth()) {
+        if ($this->getAuth() == 'true') {
             $stub = $this->files->get($this->getStubPath().'model.auth.stub.php');
         } else {
             $stub = $this->files->get($this->getStubPath().'model.stub.php');
