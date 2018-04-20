@@ -25,6 +25,10 @@ class ModelCreator
      */
     protected $auth;
 
+    protected $directorySuffix;
+
+    protected $namespacePrefix;
+
     /**
      * @param Filesystem $files
      */
@@ -46,7 +50,15 @@ class ModelCreator
      */
     public function setModel($model)
     {
-        $this->model = ucfirst($model);
+        $path = explode('/', $model);
+        if(count($path) > 1) {
+            $this->model = ucfirst(array_pop($path));
+            $this->directorySuffix = '/'. implode('/', $path);
+        } else {
+            $this->model = ucfirst($path[0]);
+            $this->directorySuffix = '';
+        }
+        $this->namespacePrefix = str_replace('/', '\\', $this->directorySuffix);
     }
 
     /**
@@ -103,7 +115,7 @@ class ModelCreator
     protected function getDirectory()
     {
         // Get the directory from the config file.
-        $directory = app_path();
+        $directory = app_path($this->directorySuffix);
         // Return the directory.
         return $directory;
     }
@@ -116,7 +128,7 @@ class ModelCreator
     protected function getPopulateData()
     {
         // Model namespace.
-        $model_namespace = 'App'; //Config::get('repositories.model_namespace');
+        $model_namespace = 'App'. $this->namespacePrefix; //Config::get('repositories.model_namespace');
         // Model class.
         $model_class = $this->getModel();
         // Populate data.
