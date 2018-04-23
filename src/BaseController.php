@@ -376,7 +376,7 @@ class BaseController extends Controller
                             // Fully qualified name of the API Resource
                             $className = call_user_func(get_class($related) . '::getResource');
                             // Reflection Magic
-                            $reflection = new ReflectionHelper()($className);
+                            $reflection = new ReflectionHelper($className);
                             // Get list of fields from Resource
                             $fields = $reflection->getFields();
                         } else {
