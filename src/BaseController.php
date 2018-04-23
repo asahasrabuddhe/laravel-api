@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
 
 class BaseController extends Controller
 {
@@ -375,7 +376,7 @@ class BaseController extends Controller
                             // Fully qualified name of the API Resource
                             $className = call_user_func(get_class($related) . '::getResource');
                             // Reflection Magic
-                            $reflection = new ReflectionHelper($className);
+                            $reflection = new ReflectionHelper()($className);
                             // Get list of fields from Resource
                             $fields = $reflection->getFields();
                         } else {

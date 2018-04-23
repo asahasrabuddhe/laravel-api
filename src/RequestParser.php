@@ -9,6 +9,7 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
+use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
 
 class RequestParser
 {
@@ -243,7 +244,7 @@ class RequestParser
             // Fully qualified name of the API Resource
             $className = call_user_func($this->model . '::getResource');
             // Reflection Magic
-            $reflection = new ReflectionHelper($className);
+            $reflection = new ReflectionHelper()($className);
             // Get list of fields from Resource
             $fields = $reflection->getFields();
             // parse extracted fields
