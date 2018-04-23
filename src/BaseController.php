@@ -373,33 +373,11 @@ class BaseController extends Controller
                         $related = $q->getRelated();
                         if (null !== call_user_func(get_class($related) . '::getResource')) {
                             // Fully qualified name of the API Resource
-                            $resourceClass = call_user_func(get_class($related) . '::getResource');
-                            // Initialize the resource object
-                            $resource = new $resourceClass(null);
-                            // mirror mirror on the wall ;)
-                            $resourceReflection = new \ReflectionClass($resource);
-
-                            // read the file containing the definition of the api resource class
-                            $source = file($resourceReflection->getMethod('toArray')->getFileName());
-                            // line number where the toArray method starts
-                            $start_line = $resourceReflection->getMethod('toArray')->getStartLine() - 1;
-                            // line number where the toArray method ends
-                            $end_line = $resourceReflection->getMethod('toArray')->getEndLine();
-                            // the actual function body of the two array methods
-                            $body = implode('', array_slice($source, $start_line, $end_line - $start_line));
-                            // empty array to house the field names returned from toArray method in the resource definition
-                            $fields = [];
-                            // tokenize the function body and scan tokens for information useful to us
-                            foreach (token_get_all('<?php' .  $body . '?>') as $token) {
-                                // Look for parser token type T_STRING (319)
-                                if (isset($token[0]) && $token[0] == 319) {
-                                    // ignore parser token representing name of the function
-                                    if ($token[1] == 'toArray' || $token[1] == 'parent') {
-                                        continue;
-                                    }
-                                    $fields[] = $token[1]; // save the field name returned in fields array
-                                }
-                            }
+                            $className = call_user_func(get_class($related) . '::getResource');
+                            // Reflection Magic
+                            $reflection = new ReflectionHelper($className);
+                            // Get list of fields from Resource
+                            $fields = $reflection->getFields();
                         } else {
                             $fields = call_user_func(get_class($related) . '::getDefaultFields');
                         }
