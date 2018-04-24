@@ -16,6 +16,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
+use Illuminate\Support\Facades\Event;
 
 class BaseController extends Controller
 {
@@ -196,10 +197,8 @@ class BaseController extends Controller
         $object = new $this->model();
         $object->fill(request()->all());
 
-        // Run hook if exists
-        if (method_exists($this, 'storing')) {
-            $object = call_user_func([$this, 'storing'], $object);
-        }
+        // Fire creating event
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'creating', $results);
 
         $object->save();
 
@@ -207,9 +206,8 @@ class BaseController extends Controller
 
         \DB::commit();
 
-        if (method_exists($this, 'stored')) {
-            call_user_func([$this, 'stored'], $object);
-        }
+        // Fire created event
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'created', $results);
 
         return BaseResponse::make('Resource created successfully', ['id' => $object->id], $meta);
     }
@@ -235,9 +233,8 @@ class BaseController extends Controller
 
         $object->fill(request()->all());
 
-        if (method_exists($this, 'updating')) {
-            $object = call_user_func([$this, 'updating'], $object);
-        }
+        // Fire updating event
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updating', $results);
 
         $object->save();
 
@@ -245,9 +242,8 @@ class BaseController extends Controller
 
         \DB::commit();
 
-        if (method_exists($this, 'updated')) {
-            call_user_func([$this, 'updated'], $object);
-        }
+        // Fire updated event
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updated', $results);
 
         return BaseResponse::make('Resource updated successfully', ['id' => $object->id], $meta);
     }
@@ -271,9 +267,8 @@ class BaseController extends Controller
             throw new ResourceNotFoundException();
         }
 
-        if (method_exists($this, 'destroying')) {
-            $object = call_user_func([$this, 'destroyed'], $object);
-        }
+        // Fire deleting event
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleting', $results);
 
         $object->delete();
 
@@ -281,9 +276,8 @@ class BaseController extends Controller
 
         \DB::commit();
 
-        if (method_exists($this, 'destroyed')) {
-            call_user_func([$this, 'destroyed'], $object);
-        }
+        // Fire deleted event
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleted', $results);
 
         return BaseResponse::make('Resource deleted successfully', null, $meta);
     }
@@ -578,7 +572,12 @@ class BaseController extends Controller
         }
 
         $this->processAppends($results);
-
+        
+        if( $single )
+            Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . '.retrived', $results);
+        else 
+            Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 's.retrived', $results);
+        
         $this->results = $results;
 
         return $results;
