@@ -7,14 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
 
 class BaseController extends Controller
 {
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     /**
      * Full class reference to model this controller represents.
      *
@@ -367,8 +372,16 @@ class BaseController extends Controller
                     } else {
                         // Add default fields, if no fields specified
                         $related = $q->getRelated();
-
-                        $fields = call_user_func(get_class($related) . '::getDefaultFields');
+                        if (null !== call_user_func(get_class($related) . '::getResource')) {
+                            // Fully qualified name of the API Resource
+                            $className = call_user_func(get_class($related) . '::getResource');
+                            // Reflection Magic
+                            $reflection = new ReflectionHelper($className);
+                            // Get list of fields from Resource
+                            $fields = $reflection->getFields();
+                        } else {
+                            $fields = call_user_func(get_class($related) . '::getDefaultFields');
+                        }
                         $fields = array_merge($fields, $relation['fields']);
 
                         $relations[$key]['fields'] = $fields;

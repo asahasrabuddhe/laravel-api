@@ -4,7 +4,6 @@ namespace Asahasrabuddhe\LaravelAPI\Routing;
 
 use Closure;
 use Illuminate\Routing\Router;
-use Illuminate\Routing\ResourceRegistrar;
 use Asahasrabuddhe\LaravelAPI\Middleware\BaseMiddleware;
 
 class BaseRouter extends Router

@@ -9,6 +9,7 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
+use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
 
 class RequestParser
 {
@@ -239,6 +240,15 @@ class RequestParser
     {
         if (request()->fields) {
             $this->parseFields(request()->fields);
+        } elseif (null !== call_user_func($this->model . '::getResource')) {
+            // Fully qualified name of the API Resource
+            $className = call_user_func($this->model . '::getResource');
+            // Reflection Magic
+            $reflection = new ReflectionHelper($className);
+            // Get list of fields from Resource
+            $fields = $reflection->getFields();
+            // parse extracted fields
+            $this->parseFields(implode(',', $fields));
         } else {
             // Else, by default, we only return default set of visible fields
             $fields = call_user_func($this->model . '::getDefaultFields');
@@ -276,7 +286,6 @@ class RequestParser
                 $where = preg_replace_callback_array([
                     static::OPERATOR_REGEX => [$this, 'replaceOperators'],
                 ], $where);
-
                 $this->filters = $where;
             } else {
                 throw new InvalidFilterDefinitionException();
@@ -318,7 +327,7 @@ class RequestParser
 
     protected function replaceOperators($matches)
     {
-        switch ($matches[0]) {
+        switch (trim($matches[0])) {
             case 'eq':
                 return ' = ';
             case 'ne':
