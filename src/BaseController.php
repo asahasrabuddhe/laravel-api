@@ -3,6 +3,7 @@
 namespace Asahasrabuddhe\LaravelAPI;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,11 +13,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
-use Illuminate\Support\Facades\Event;
 
 class BaseController extends Controller
 {
@@ -572,12 +572,13 @@ class BaseController extends Controller
         }
 
         $this->processAppends($results);
-        
-        if( $single )
+
+        if ($single) {
             Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . '.retrived', $results);
-        else 
+        } else {
             Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 's.retrived', $results);
-        
+        }
+
         $this->results = $results;
 
         return $results;
