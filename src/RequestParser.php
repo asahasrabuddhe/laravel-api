@@ -211,7 +211,8 @@ class RequestParser
      */
     protected function parseRequest()
     {
-        if (request()->limit) {
+
+        if ( isset(request()->limit) ) {
             if (request()->limit <= 0) {
                 throw new InvalidPerPageLimitException;
             }
