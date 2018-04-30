@@ -3,6 +3,7 @@
 namespace Asahasrabuddhe\LaravelAPI\Tests\Models;
 
 use Asahasrabuddhe\LaravelAPI\BaseModel;
+use Asahasrabuddhe\LaravelAPI\Tests\Http\Resources\PostResource;
 
 class Post extends BaseModel
 {

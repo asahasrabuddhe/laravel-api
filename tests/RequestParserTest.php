@@ -11,6 +11,7 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
+use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;
 
 class RequestParserTest extends TestCase
 {
@@ -118,6 +119,18 @@ class RequestParserTest extends TestCase
     }
 
     /** @test */
+    public function parses_fields_from_resource()
+    {
+        $_GET = [];
+        
+        request()->merge($_GET);
+
+        $parser = new RequestParser(Post::class);
+
+        $this->assertEquals($parser->getFields(), ['title', 'content', 'id']);
+    }
+
+    /** @test */
     public function throws_exception_for_unknown_field()
     {
         $this->expectException(UnknownFieldException::class);
@@ -218,7 +231,7 @@ class RequestParserTest extends TestCase
 
         $parser = new RequestParser(User::class);
 
-        $this->assertEquals($parser->getFilters(), '(`name`  LIKE  "Luc")');
+        $this->assertEquals($parser->getFilters(), '(`name`  LIKE "Luc")');
     }
 
     /** @test */

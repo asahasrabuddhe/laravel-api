@@ -376,7 +376,7 @@ class RequestParser
      */
     protected function formatRelationalOrderingFieldToSql($matches)
     {
-        return $matches[1] . '`.`' . $matches[2] . ' ' . $matches[3];
+        return '`' . $matches[1] . '`.`' . $matches[2] . '` ' . $matches[3];
     }
 
     /**
