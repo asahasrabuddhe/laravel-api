@@ -7,7 +7,6 @@
             "email": "ajitem.s@outlook.com"
         }
     ],
-    "require": {},
     "autoload": {
         "psr-4": {
             "Asahasrabuddhe\\LaravelAPI\\": "src/"
@@ -29,6 +28,7 @@
         }
     },
     "require-dev": {
-        "orchestra/testbench": "~3.6"
+        "orchestra/testbench": "~3.6",
+        "php-coveralls/php-coveralls": "^2.0"
     }
 }
