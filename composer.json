@@ -13,6 +13,11 @@
             "Asahasrabuddhe\\LaravelAPI\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Asahasrabuddhe\\LaravelAPI\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
@@ -22,5 +27,8 @@
                 "ApiRoute": "Asahasrabuddhe\\LaravelAPI\\Facades\\ApiRoute"
             }
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "~3.6"
     }
 }
