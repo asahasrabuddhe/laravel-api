@@ -13,4 +13,4 @@ after_success:
     - bash <(curl -s https://codecov.io/bash) -t 03ae5c0f-95ef-4671-a35b-0a9cea99f56c
 
 after_script:
-  - php vendor/bin/coveralls -v
+  - php vendor/bin/php-coveralls -v
