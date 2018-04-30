@@ -2,8 +2,8 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Handlers;
 
-use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\Exception\HttpResponseException;
 use Asahasrabuddhe\LaravelAPI\BaseResponse as Response;
 use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;

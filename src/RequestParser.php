@@ -3,16 +3,16 @@
 namespace Asahasrabuddhe\LaravelAPI;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
-use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
-use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
-use Illuminate\Support\Facades\Schema;
 
 class RequestParser
 {
@@ -214,7 +214,7 @@ class RequestParser
      */
     protected function parseRequest()
     {
-        if ( isset(request()->limit) ) {
+        if (isset(request()->limit)) {
             if (request()->limit <= 0) {
                 throw new InvalidPerPageLimitException;
             }
@@ -223,8 +223,8 @@ class RequestParser
             $this->limit = config('api.perPage');
         }
 
-        if ( isset(request()->offset) ) {
-            if(request()->offset < 0 ) {
+        if (isset(request()->offset)) {
+            if (request()->offset < 0) {
                 throw new InvalidOffsetException;
             }
             $this->offset = request()->offset;
@@ -502,7 +502,7 @@ class RequestParser
                     }
                 } else { // Else, its a normal field
                     // Check if the field actually exists otherwise, throw exception
-                    if( Schema::hasColumn((new $this->model())->getTable(), $fieldName) ) {
+                    if (Schema::hasColumn((new $this->model())->getTable(), $fieldName)) {
                         $this->fields[] = $fieldName;
                     } else {
                         throw new UnknownFieldException;
