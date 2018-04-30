@@ -4,13 +4,14 @@ namespace Asahasrabuddhe\LaravelAPI\Tests\Models;
 
 use Asahasrabuddhe\LaravelAPI\BaseModel;
 use Asahasrabuddhe\LaravelAPI\Tests\Http\Resources\AddressResource;
+
 /**
  * Class Address.
  */
 class Address extends BaseModel
 {
     /**
-     * Fully qualified of the Eloquent API Resource class that this model will be transformed into
+     * Fully qualified of the Eloquent API Resource class that this model will be transformed into.
      *
      * @var string
      */

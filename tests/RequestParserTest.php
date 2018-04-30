@@ -2,26 +2,22 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Tests;
 
-use Carbon\Carbon;
-use Asahasrabuddhe\LaravelAPI\BaseModel;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Tests\Exception\TooManyRequestsHttpExceptionTest;
 use Asahasrabuddhe\LaravelAPI\RequestParser;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\User;
-use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
-use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
-use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
-
 
 class RequestParserTest extends TestCase
 {
     /** @test */
     public function parses_limit_from_request()
     {
-        $_GET = [];
+        $_GET          = [];
         $_GET['limit'] = 15;
 
         request()->merge($_GET);
@@ -48,7 +44,7 @@ class RequestParserTest extends TestCase
     {
         $this->expectException(InvalidPerPageLimitException::class);
 
-        $_GET = [];
+        $_GET          = [];
         $_GET['limit'] = -10;
 
         request()->merge($_GET);
@@ -61,7 +57,7 @@ class RequestParserTest extends TestCase
     {
         $this->expectException(InvalidPerPageLimitException::class);
 
-        $_GET = [];
+        $_GET          = [];
         $_GET['limit'] = 0;
 
         request()->merge($_GET);
@@ -72,7 +68,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_offset_from_request()
     {
-        $_GET = [];
+        $_GET           = [];
         $_GET['offset'] = 10;
 
         request()->merge($_GET);
@@ -97,7 +93,7 @@ class RequestParserTest extends TestCase
     {
         $this->expectException(InvalidOffsetException::class);
 
-        $_GET = [];
+        $_GET           = [];
         $_GET['offset'] = -10;
 
         request()->merge($_GET);
@@ -108,7 +104,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_fields_from_request()
     {
-        $_GET = [];
+        $_GET           = [];
         $_GET['fields'] = 'name,email,address,posts';
 
         request()->merge($_GET);
@@ -125,8 +121,8 @@ class RequestParserTest extends TestCase
     public function throws_exception_for_unknown_field()
     {
         $this->expectException(UnknownFieldException::class);
-        
-        $_GET = [];
+
+        $_GET           = [];
         $_GET['fields'] = 'phone';
 
         request()->merge($_GET);
@@ -137,7 +133,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_greater_than_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id gt 5';
 
         request()->merge($_GET);
@@ -150,7 +146,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_greater_than_equal_to_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id ge 5';
 
         request()->merge($_GET);
@@ -163,7 +159,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_lesser_than_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id lt 5';
 
         request()->merge($_GET);
@@ -176,7 +172,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_less_than_equal_to_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id le 5';
 
         request()->merge($_GET);
@@ -189,7 +185,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_equal_to_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id eq 5';
 
         request()->merge($_GET);
@@ -202,7 +198,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_not_equal_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id ne 5';
 
         request()->merge($_GET);
@@ -215,7 +211,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_like_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id ne 5';
 
         request()->merge($_GET);
@@ -225,11 +221,10 @@ class RequestParserTest extends TestCase
         $this->assertEquals($parser->getFilters(), '(`id`  <>  5)');
     }
 
-
     /** @test */
     public function parses_is_null_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id eq null';
 
         request()->merge($_GET);
@@ -242,7 +237,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parses_is_not_null_filter_from_request()
     {
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id ne null';
 
         request()->merge($_GET);
@@ -257,7 +252,7 @@ class RequestParserTest extends TestCase
     {
         $this->expectException(InvalidFilterDefinitionException::class);
 
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'id as 5';
 
         request()->merge($_GET);
@@ -270,7 +265,7 @@ class RequestParserTest extends TestCase
     {
         $this->expectException(FieldCannotBeFilteredException::class);
 
-        $_GET = [];
+        $_GET            = [];
         $_GET['filters'] = 'email lk "perennial"';
 
         request()->merge($_GET);
@@ -281,7 +276,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parse_ascending_ordering_from_request()
     {
-        $_GET = [];
+        $_GET          = [];
         $_GET['order'] = 'id asc';
 
         request()->merge($_GET);
@@ -294,7 +289,7 @@ class RequestParserTest extends TestCase
     /** @test */
     public function parse_descending_ordering_from_request()
     {
-        $_GET = [];
+        $_GET          = [];
         $_GET['order'] = 'id desc';
 
         request()->merge($_GET);
@@ -309,7 +304,7 @@ class RequestParserTest extends TestCase
     {
         $this->expectException(InvalidOrderingDefinitionException::class);
 
-        $_GET = [];
+        $_GET          = [];
         $_GET['order'] = 'id ad';
 
         request()->merge($_GET);

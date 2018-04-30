@@ -26,20 +26,22 @@ class User extends BaseUser
     ];
 
     protected $default = [
-        'name'
+        'name',
     ];
 
     // protected $resource = UserResource::class;
 
     protected $filterable = [
-        'id', 'name'
+        'id', 'name',
     ];
 
-    public function address() {
+    public function address()
+    {
         return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Address');
     }
 
-    public function posts() {
+    public function posts()
+    {
         return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Post');
     }
 }
