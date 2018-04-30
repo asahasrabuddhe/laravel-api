@@ -10,6 +10,7 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
 
 class RequestParser
 {
@@ -211,7 +212,6 @@ class RequestParser
      */
     protected function parseRequest()
     {
-
         if ( isset(request()->limit) ) {
             if (request()->limit <= 0) {
                 throw new InvalidPerPageLimitException;
@@ -221,7 +221,10 @@ class RequestParser
             $this->limit = config('api.perPage');
         }
 
-        if (request()->offset) {
+        if ( isset(request()->offset) ) {
+            if(request()->offset < 0 ) {
+                throw new InvalidOffsetException;
+            }
             $this->offset = request()->offset;
         } else {
             $this->offset = 0;
