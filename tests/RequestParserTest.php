@@ -212,13 +212,13 @@ class RequestParserTest extends TestCase
     public function parses_like_filter_from_request()
     {
         $_GET            = [];
-        $_GET['filters'] = 'id ne 5';
+        $_GET['filters'] = 'name lk "Luc"';
 
         request()->merge($_GET);
 
         $parser = new RequestParser(User::class);
 
-        $this->assertEquals($parser->getFilters(), '(`id`  <>  5)');
+        $this->assertEquals($parser->getFilters(), '(`name`  LIKE  "Luc")');
     }
 
     /** @test */
