@@ -11,6 +11,8 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
+use Illuminate\Support\Facades\Schema;
 
 class RequestParser
 {
@@ -404,7 +406,6 @@ class RequestParser
                 preg_match_all(static::FIELD_PARTS_REGEX, $match, $parts);
                 $fieldName = $parts[1][0];
                 if (Str::contains($fieldName, ':') || call_user_func($this->model . '::relationExists', $fieldName)) {
-
                     // If field name has a colon, we assume its a relations
                     // OR
                     // If method with field name exists in the class, we assume its a relation
@@ -499,9 +500,13 @@ class RequestParser
                             $this->fields[] = $keyField;
                         }
                     }
-                } else {
-                    // Else, its a normal field
-                    $this->fields[] = $fieldName;
+                } else { // Else, its a normal field
+                    // Check if the field actually exists otherwise, throw exception
+                    if( Schema::hasColumn((new $this->model())->getTable(), $fieldName) ) {
+                        $this->fields[] = $fieldName;
+                    } else {
+                        throw new UnknownFieldException;
+                    }
                 }
             }
         }
