@@ -35,12 +35,12 @@ class RequestParser
     /**
      * Checks if ordering is specified correctly.
      */
-    const ORDER_FILTER = '/[\\s]*([\\w\\.]+)(?:[\\s](?!,))*(asc|desc|)/i';
+    const ORDER_FILTER = '/[\\s]*([\\w\\.]+)(?:[\\s](?!,))*(asc|desc)/i';
 
     /**
      * Extract order parts for relational field.
      */
-    const RELATION_ORDER_REGEX = '/[\\s]*([\\w]+)\\.([\\w]+)(?:[\\s](?!,))*(asc|desc|)/';
+    const RELATION_ORDER_REGEX = '/[\\s]*([\\w]+)\\.([\\w]+)(?:[\\s](?!,))*(asc|desc)/';
 
     // /**
     //  * Extract order parts for regular field

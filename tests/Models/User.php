@@ -31,6 +31,10 @@ class User extends BaseUser
 
     // protected $resource = UserResource::class;
 
+    protected $filterable = [
+        'id', 'name'
+    ];
+
     public function address() {
         return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Address');
     }
