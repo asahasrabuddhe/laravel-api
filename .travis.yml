@@ -7,7 +7,7 @@ php:
 
 script:
   - mkdir -p build/logs
-  - php vendor/bin/phpunit -c phpunit.xml --coverage-clover=coverage.xml
+  - php vendor/bin/phpunit -c phpunit.xml --coverage-clover=coverage.xml --testdox
 
 after_success:
     - bash <(curl -s https://codecov.io/bash) -t 03ae5c0f-95ef-4671-a35b-0a9cea99f56c
