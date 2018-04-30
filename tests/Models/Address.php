@@ -33,6 +33,6 @@ class Address extends BaseModel
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('Asahasrabuddhe\LaravelAPI\Tests\Models\User');
     }
 }

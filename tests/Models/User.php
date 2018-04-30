@@ -29,13 +29,13 @@ class User extends BaseUser
         'name'
     ];
 
-    protected $resource = UserResource::class;
+    // protected $resource = UserResource::class;
 
     public function address() {
-        return $this->hasMany('App\Address');
+        return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Address');
     }
 
     public function posts() {
-        return $this->hasMany('App\Post');
+        return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Post');
     }
 }
