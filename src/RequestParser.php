@@ -335,9 +335,9 @@ class RequestParser
     {
         switch (trim($matches[0])) {
             case 'eq':
-                return ' = ';
+                return' = ';
             case 'ne':
-                return' != ';
+                return' <> ';
             case 'gt':
                 return' > ';
             case 'ge':
@@ -362,7 +362,7 @@ class RequestParser
                     ], $order);
                 $this->order = $order;
             } else {
-                throw new InvalidOrderingDefinitionException();
+                throw new InvalidOrderingDefinitionException;
             }
         }
     }
