@@ -16,12 +16,12 @@ class AddressResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'line_1' => $this->line_1,
-            'line_2' => $this->line_2,
-            'city' => $this->city,
-            'state' => $this->state,
-            'country' => $this->country,
-            'zip_code' => $this->zip_code
+            'line_1'   => $this->line_1,
+            'line_2'   => $this->line_2,
+            'city'     => $this->city,
+            'state'    => $this->state,
+            'country'  => $this->country,
+            'zip_code' => $this->zip_code,
         ];
     }
 }

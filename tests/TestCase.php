@@ -2,13 +2,12 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Tests;
 
-use Orchestra\Testbench\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
-use Asahasrabuddhe\LaravelAPI\Tests\Models\User;
-use Asahasrabuddhe\LaravelAPI\Tests\Models\Address;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;
+use Asahasrabuddhe\LaravelAPI\Tests\Models\User;
+use Orchestra\Testbench\TestCase as BaseTestCase;
+use Asahasrabuddhe\LaravelAPI\Tests\Models\Address;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -20,7 +19,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageAliases($app)
     {
         return [
-            'ApiRoute' => 'Asaharabuddhe\LaravelAPI\Facades\ApiRoute'
+            'ApiRoute' => 'Asaharabuddhe\LaravelAPI\Facades\ApiRoute',
         ];
     }
 
@@ -33,7 +32,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->artisan('migrate', [
             '--database' => 'testbench',
-            '--path' => './database/migrations'
+            '--path'     => './database/migrations',
         ]);
 
         $this->migrateDatabase();
@@ -52,9 +51,9 @@ abstract class TestCase extends BaseTestCase
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
         $app['config']->set('api.perPage', 10);
     }
@@ -71,7 +70,7 @@ abstract class TestCase extends BaseTestCase
             $table->rememberToken();
             $table->timestamps();
         });
-        
+
         $schemaBuilder->create('password_resets', function (Blueprint $table) {
             $table->string('email')->index();
             $table->string('token');
@@ -98,38 +97,38 @@ abstract class TestCase extends BaseTestCase
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
-        });        
+        });
     }
 
     protected function seedDatabase()
     {
         $faker = \Faker\Factory::create();
-        for($i = 1; $i <= 50; $i++) {
+        for ($i = 1; $i <= 50; $i++) {
             User::create([
-                'name' => $faker->name,
-                'email' => $faker->unique()->safeEmail,
-                'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+                'name'           => $faker->name,
+                'email'          => $faker->unique()->safeEmail,
+                'password'       => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
                 'remember_token' => str_random(10),
             ]);
         }
 
-        for($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             Address::create([
-                'line_1' => $faker->streetAddress,
-                'line_2' => $faker->secondaryAddress,
-                'city' => $faker->city,
-                'state' => $faker->state,
-                'country' => $faker->country,
+                'line_1'   => $faker->streetAddress,
+                'line_2'   => $faker->secondaryAddress,
+                'city'     => $faker->city,
+                'state'    => $faker->state,
+                'country'  => $faker->country,
                 'zip_code' => $faker->postcode,
-                'user_id' => $faker->numberBetween(1, 50)
+                'user_id'  => $faker->numberBetween(1, 50),
             ]);
         }
 
-        for($i = 1; $i <= 200; $i++) {
+        for ($i = 1; $i <= 200; $i++) {
             Post::create([
-                'title' => $faker->realText($maxNbChars = 200, $indexSize = 2),
-                'content' => $faker->text($maxNbChars = 200), 
-                'user_id' => $faker->numberBetween(1, 50)
+                'title'   => $faker->realText($maxNbChars = 200, $indexSize = 2),
+                'content' => $faker->text($maxNbChars = 200),
+                'user_id' => $faker->numberBetween(1, 50),
             ]);
         }
     }
