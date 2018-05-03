@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\User;
+use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Address;
+use Asahasrabuddhe\LaravelAPI\Tests\Models\Comment;
+use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\PostController;
 use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\UserController;
 use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\AddressController;
-use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\PostController;
-use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
-use Asahasrabuddhe\LaravelAPI\Tests\Models\Comment;
 
 abstract class TestCase extends BaseTestCase
 {
