@@ -17,6 +17,7 @@ use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Asahasrabuddhe\LaravelAPI\Exceptions\ResourceNotFoundException;
 
 class BaseController extends Controller
 {

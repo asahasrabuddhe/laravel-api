@@ -12,6 +12,7 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\ValidationException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\ResourceNotFoundException;
 
 class ExceptionHandler extends Handler
 {
@@ -31,6 +32,10 @@ class ExceptionHandler extends Handler
                         'url' => request()->url(),
                     ]));
             } elseif ($e instanceof ModelNotFoundException) {
+                return Response::exception(new BaseException('Requested resource not found', null, 404, 404, null, [
+                        'url' => request()->url(),
+                    ]));
+            } elseif ($e instanceof ResourceNotFoundException) {
                 return Response::exception(new BaseException('Requested resource not found', null, 404, 404, null, [
                         'url' => request()->url(),
                     ]));
