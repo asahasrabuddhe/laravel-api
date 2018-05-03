@@ -8,6 +8,10 @@ use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\User;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Address;
+use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\UserController;
+use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\AddressController;
+use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\PostController;
+use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -38,6 +42,10 @@ abstract class TestCase extends BaseTestCase
         $this->migrateDatabase();
 
         $this->seedDatabase();
+
+        $this->app->make(BaseRouter::class)->resource('users', UserController::class);
+        $this->app->make(BaseRouter::class)->resource('posts', PostController::class);
+        $this->app->make(BaseRouter::class)->resource('comments', CommentController::class);
     }
 
     /**
@@ -112,7 +120,7 @@ abstract class TestCase extends BaseTestCase
             ]);
         }
 
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 50; $i++) {
             Address::create([
                 'line_1'   => $faker->streetAddress,
                 'line_2'   => $faker->secondaryAddress,
@@ -120,7 +128,7 @@ abstract class TestCase extends BaseTestCase
                 'state'    => $faker->state,
                 'country'  => $faker->country,
                 'zip_code' => $faker->postcode,
-                'user_id'  => $faker->numberBetween(1, 50),
+                'user_id'  => $i,
             ]);
         }
 
