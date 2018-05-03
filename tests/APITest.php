@@ -14,18 +14,18 @@ class APITest extends TestCase
             'data' => [
                 '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
@@ -40,25 +40,25 @@ class APITest extends TestCase
                 '*' => [
                     'name',
                     'email',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
     /** @test */
     public function test_get_all_users_with_related_fields_one_to_one()
     {
-        $response = $this->call('GET', 'api/v1/users?fields=name,email,address');
+        $response        = $this->call('GET', 'api/v1/users?fields=name,email,address');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -69,18 +69,18 @@ class APITest extends TestCase
                     'name',
                     'email',
                     'address',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertFalse(is_array($responseContent->data[0]->address));
     }
@@ -88,7 +88,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_all_users_with_related_fields_one_to_many()
     {
-        $response = $this->call('GET', 'api/v1/users?fields=name,email,posts');
+        $response        = $this->call('GET', 'api/v1/users?fields=name,email,posts');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -103,20 +103,20 @@ class APITest extends TestCase
                         '*' => [
                             'title',
                             'content',
-                            'id'
-                        ]
-                    ]
-                ]
+                            'id',
+                        ],
+                    ],
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertTrue(is_array($responseContent->data[0]->posts));
     }
@@ -124,7 +124,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_all_users_with_second_level_relationships()
     {
-        $response = $this->call('GET', 'api/v1/users?fields=name,address,posts{title,content},posts:comments{content},posts:comments:author{name}');
+        $response        = $this->call('GET', 'api/v1/users?fields=name,address,posts{title,content},posts:comments{content},posts:comments:author{name}');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -146,30 +146,30 @@ class APITest extends TestCase
                                     'id',
                                     'author' => [
                                         'name',
-                                        'id'
-                                    ]
-                               ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'id',
+                                    ],
+                               ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
     /** @test */
     public function test_get_all_users_with_filters()
     {
-        $response = $this->call('GET', 'api/v1/users?filters=id gt 5');
+        $response        = $this->call('GET', 'api/v1/users?filters=id gt 5');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -178,18 +178,18 @@ class APITest extends TestCase
             'data' => [
                 '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertTrue($responseContent->data[0]->id >= 5);
     }
@@ -197,7 +197,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_all_users_with_filters_returns_error_for_unfilterable_fields()
     {
-        $response = $this->call('GET', 'api/v1/users?filters=email lk "Luc"');
+        $response        = $this->call('GET', 'api/v1/users?filters=email lk "Luc"');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 400);
@@ -205,14 +205,14 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
     public function test_get_all_users_with_limit()
     {
-        $response = $this->call('GET', 'api/v1/users?limit=5');
+        $response        = $this->call('GET', 'api/v1/users?limit=5');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -221,25 +221,25 @@ class APITest extends TestCase
             'data' => [
                 '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertEquals(count($responseContent->data), 5);
     }
 
     public function test_get_all_users_with_limit_returns_error_for_invalid_limit()
     {
-        $response = $this->call('GET', 'api/v1/users?limit=0');
+        $response        = $this->call('GET', 'api/v1/users?limit=0');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 400);
@@ -247,14 +247,14 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
     public function test_get_all_users_with_limit_returns_error_for_negative_limit()
     {
-        $response = $this->call('GET', 'api/v1/users?limit=-5');
+        $response        = $this->call('GET', 'api/v1/users?limit=-5');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 400);
@@ -262,14 +262,14 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
     public function test_get_all_users_with_order()
     {
-        $response = $this->call('GET', 'api/v1/users?order=id desc');
+        $response        = $this->call('GET', 'api/v1/users?order=id desc');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -278,18 +278,18 @@ class APITest extends TestCase
             'data' => [
                 '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertEquals($responseContent->data[0]->id, 50);
     }
@@ -297,7 +297,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_single_user()
     {
-        $response = $this->call('GET', 'api/v1/users/15');
+        $response        = $this->call('GET', 'api/v1/users/15');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -305,11 +305,11 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 'name',
-                'id'
+                'id',
             ],
             'meta' => [
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertEquals($responseContent->data->id, 15);
     }
@@ -317,7 +317,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_single_user_returns_error_for_users_that_do_not_exist()
     {
-        $response = $this->call('GET', 'api/v1/users/1500');
+        $response        = $this->call('GET', 'api/v1/users/1500');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 404);
@@ -325,15 +325,15 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
     /** @test */
     public function test_get_single_user_with_one_to_one_relation_endpoint()
     {
-        $response = $this->call('GET', 'api/v1/users/15/address');
+        $response        = $this->call('GET', 'api/v1/users/15/address');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -346,18 +346,18 @@ class APITest extends TestCase
                 'state',
                 'country',
                 'zip_code',
-                'id'
+                'id',
             ],
             'meta' => [
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
     /** @test */
     public function test_get_single_user_with_one_to_many_relation_endpoint()
     {
-        $response = $this->call('GET', 'api/v1/users/15/posts');
+        $response        = $this->call('GET', 'api/v1/users/15/posts');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -367,12 +367,12 @@ class APITest extends TestCase
                 [
                     'title',
                     'content',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
@@ -383,19 +383,19 @@ class APITest extends TestCase
             'POST',
             'api/v1/users',
             [
-                'name' => 'Dummy User',
-                'email' => 'dummy@test.com',
-                'password' => 'secret'
+                'name'     => 'Dummy User',
+                'email'    => 'dummy@test.com',
+                'password' => 'secret',
             ]
         );
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals(201, $response->status());
-        $id = $responseContent->data->id;
+        $id       = $responseContent->data->id;
         $response = $responseContent = null;
 
         // Verify newly created user
-        $response = $this->call('GET', 'api/v1/users/' . $id);
+        $response        = $this->call('GET', 'api/v1/users/' . $id);
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -403,8 +403,8 @@ class APITest extends TestCase
         $response->assertJson([
             'data' => [
                 'name' => 'Dummy User',
-                'id' => $id
-            ]
+                'id'   => $id,
+            ],
         ]);
     }
 
@@ -415,7 +415,7 @@ class APITest extends TestCase
             'PUT',
             'api/v1/users/15',
             [
-                'name' => 'Dummy1 User',
+                'name'  => 'Dummy1 User',
                 'email' => 'dummy1@test.com',
             ]
         );
@@ -424,7 +424,7 @@ class APITest extends TestCase
         $response = null;
 
         // Verify newly created user
-        $response = $this->call('GET', 'api/v1/users/15');
+        $response        = $this->call('GET', 'api/v1/users/15');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -432,8 +432,8 @@ class APITest extends TestCase
         $response->assertJson([
             'data' => [
                 'name' => 'Dummy1 User',
-                'id' => 15
-            ]
+                'id'   => 15,
+            ],
         ]);
     }
 
@@ -442,7 +442,7 @@ class APITest extends TestCase
         $response = $this->call('DELETE', 'api/v1/users/25');
         $this->assertEquals(200, $response->status());
 
-        $response = $this->call('GET', 'api/v1/users/25');
+        $response        = $this->call('GET', 'api/v1/users/25');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 404);
@@ -450,8 +450,8 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 }
