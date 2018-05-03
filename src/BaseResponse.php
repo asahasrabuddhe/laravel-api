@@ -68,7 +68,7 @@ class BaseResponse
      * @param array $data
      * @return Response
      */
-    public static function make($message = null, $data = null, $meta = null)
+    public static function make($message = null, $data = null, $meta = null, $status = 200)
     {
         $response = [];
 
@@ -84,7 +84,7 @@ class BaseResponse
             $response['meta'] = $meta;
         }
 
-        $returnResponse = Response::make($response);
+        $returnResponse = Response::make($response, $status);
 
         return $returnResponse;
     }
