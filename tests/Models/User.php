@@ -37,7 +37,7 @@ class User extends BaseUser
 
     public function address()
     {
-        return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Address');
+        return $this->hasOne('Asahasrabuddhe\LaravelAPI\Tests\Models\Address');
     }
 
     public function posts()
