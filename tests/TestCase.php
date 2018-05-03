@@ -12,6 +12,7 @@ use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\UserController;
 use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\AddressController;
 use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\PostController;
 use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
+use Asahasrabuddhe\LaravelAPI\Tests\Models\Comment;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -45,6 +46,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->app->make(BaseRouter::class)->resource('users', UserController::class);
         $this->app->make(BaseRouter::class)->resource('posts', PostController::class);
+        $this->app->make(BaseRouter::class)->resource('address', AddressController::class);
         $this->app->make(BaseRouter::class)->resource('comments', CommentController::class);
     }
 
@@ -106,6 +108,16 @@ abstract class TestCase extends BaseTestCase
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
+
+        $schemaBuilder->create('comments', function (Blueprint $table) {
+            $table->increments('id');
+            $table->text('content');
+            $table->integer('post_id')->unsigned();
+            $table->foreign('post_id')->references('id')->on('posts');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->timestamps();
+        });
     }
 
     protected function seedDatabase()
@@ -136,6 +148,14 @@ abstract class TestCase extends BaseTestCase
             Post::create([
                 'title'   => $faker->realText($maxNbChars = 200, $indexSize = 2),
                 'content' => $faker->text($maxNbChars = 200),
+                'user_id' => $faker->numberBetween(1, 50),
+            ]);
+        }
+
+        for ($i = 1; $i <= 400; $i++) {
+            Comment::create([
+                'content' => $faker->text($maxNbChars = 100),
+                'post_id' => $faker->numberBetween(1, 200),
                 'user_id' => $faker->numberBetween(1, 50),
             ]);
         }

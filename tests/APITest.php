@@ -12,7 +12,7 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'id'
                 ]
@@ -37,7 +37,7 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'email',
                     'id'
@@ -65,7 +65,7 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'email',
                     'address',
@@ -95,10 +95,17 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'email',
-                    'id'
+                    'id',
+                    'posts' => [
+                        '*' => [
+                            'title',
+                            'content',
+                            'id'
+                        ]
+                    ]
                 ]
             ],
             'meta' => [
@@ -115,6 +122,51 @@ class APITest extends TestCase
     }
 
     /** @test */
+    public function test_get_all_users_with_second_level_relationships()
+    {
+        $response = $this->call('GET', 'api/v1/users?fields=name,address,posts{title,content},posts:comments{content},posts:comments:author{name}');
+        $responseContent = json_decode($response->getContent());
+
+        $this->assertEquals($response->status(), 200);
+        $this->assertEquals('application/json', $response->headers->get('Content-Type'));
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'name',
+                    'id',
+                    'posts' => [
+                        '*' => [
+                           'title',
+                           'content',
+                           'id',
+                           'comments' => [
+                            '*' => [
+                                    'content',
+                                    'user_id',
+                                    'id',
+                                    'author' => [
+                                        'name',
+                                        'id'
+                                    ]
+                               ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'meta' => [
+                'paging' => [
+                    'links' => [
+                        'next'
+                    ],
+                    'total'
+                ],
+                'time'
+            ]
+        ]);
+    }
+
+    /** @test */
     public function test_get_all_users_with_filters()
     {
         $response = $this->call('GET', 'api/v1/users?filters=id gt 5');
@@ -124,7 +176,7 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'id'
                 ]
@@ -167,7 +219,7 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'id'
                 ]
@@ -224,7 +276,7 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'id'
                 ]
