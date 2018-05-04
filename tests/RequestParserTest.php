@@ -4,6 +4,7 @@ namespace Asahasrabuddhe\LaravelAPI\Tests;
 
 use Illuminate\Http\Request;
 use Asahasrabuddhe\LaravelAPI\RequestParser;
+use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\User;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
@@ -11,7 +12,6 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOrderingDefinitionException;
-use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;
 
 class RequestParserTest extends TestCase
 {
@@ -122,7 +122,7 @@ class RequestParserTest extends TestCase
     public function parses_fields_from_resource()
     {
         $_GET = [];
-        
+
         request()->merge($_GET);
 
         $parser = new RequestParser(Post::class);

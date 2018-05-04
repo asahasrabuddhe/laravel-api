@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\ValidationException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\ResourceNotFoundException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
 
 class ExceptionHandler extends Handler
 {

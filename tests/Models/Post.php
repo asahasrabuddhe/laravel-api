@@ -13,4 +13,9 @@ class Post extends BaseModel
     {
         return $this->belongsTo('Asahasrabuddhe\LaravelAPI\Tests\Models\User');
     }
+
+    public function comments()
+    {
+        return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Comment');
+    }
 }

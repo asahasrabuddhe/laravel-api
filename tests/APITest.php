@@ -12,20 +12,20 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
@@ -37,21 +37,21 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'email',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
@@ -65,22 +65,22 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'email',
                     'address',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertFalse(is_array($responseContent->data[0]->address));
     }
@@ -95,23 +95,75 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
                     'email',
-                    'id'
-                ]
+                    'id',
+                    'posts' => [
+                        '*' => [
+                            'title',
+                            'content',
+                            'id',
+                        ],
+                    ],
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertTrue(is_array($responseContent->data[0]->posts));
+    }
+
+    /** @test */
+    public function test_get_all_users_with_second_level_relationships()
+    {
+        $response        = $this->call('GET', '/api/v1/users?fields=name,address,posts{title,content},posts:comments{content},posts:comments:author{name}');
+        $responseContent = json_decode($response->getContent());
+
+        $this->assertEquals($response->status(), 200);
+        $this->assertEquals('application/json', $response->headers->get('Content-Type'));
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'name',
+                    'id',
+                    'posts' => [
+                        '*' => [
+                           'title',
+                           'content',
+                           'id',
+                           'comments' => [
+                            '*' => [
+                                    'content',
+                                    'user_id',
+                                    'id',
+                                    'author' => [
+                                        'name',
+                                        'id',
+                                    ],
+                               ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'meta' => [
+                'paging' => [
+                    'links' => [
+                        'next',
+                    ],
+                    'total',
+                ],
+                'time',
+            ],
+        ]);
     }
 
     /** @test */
@@ -124,20 +176,20 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertTrue($responseContent->data[0]->id >= 5);
     }
@@ -153,8 +205,8 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
@@ -167,20 +219,20 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertEquals(count($responseContent->data), 5);
     }
@@ -195,8 +247,8 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
@@ -210,8 +262,8 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
@@ -224,20 +276,20 @@ class APITest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $response->assertJsonStructure([
             'data' => [
-                [
+                '*' => [
                     'name',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
                 'paging' => [
                     'links' => [
-                        'next'
+                        'next',
                     ],
-                    'total'
+                    'total',
                 ],
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertEquals($responseContent->data[0]->id, 50);
     }
@@ -253,11 +305,11 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 'name',
-                'id'
+                'id',
             ],
             'meta' => [
-                'time'
-            ]
+                'time',
+            ],
         ]);
         $this->assertEquals($responseContent->data->id, 15);
     }
@@ -273,8 +325,8 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 
@@ -294,11 +346,11 @@ class APITest extends TestCase
                 'state',
                 'country',
                 'zip_code',
-                'id'
+                'id',
             ],
             'meta' => [
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
@@ -315,12 +367,12 @@ class APITest extends TestCase
                 [
                     'title',
                     'content',
-                    'id'
-                ]
+                    'id',
+                ],
             ],
             'meta' => [
-                'time'
-            ]
+                'time',
+            ],
         ]);
     }
 
@@ -331,15 +383,15 @@ class APITest extends TestCase
             'POST',
             '/api/v1/users',
             [
-                'name' => 'Dummy User',
-                'email' => 'dummy@test.com',
-                'password' => 'secret'
+                'name'     => 'Dummy User',
+                'email'    => 'dummy@test.com',
+                'password' => 'secret',
             ]
         );
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals(201, $response->status());
-        $id = $responseContent->data->id;
+        $id       = $responseContent->data->id;
         $response = $responseContent = null;
 
         // Verify newly created user
@@ -351,8 +403,8 @@ class APITest extends TestCase
         $response->assertJson([
             'data' => [
                 'name' => 'Dummy User',
-                'id' => $id
-            ]
+                'id'   => $id,
+            ],
         ]);
     }
 
@@ -363,7 +415,7 @@ class APITest extends TestCase
             'PUT',
             '/api/v1/users/15',
             [
-                'name' => 'Dummy1 User',
+                'name'  => 'Dummy1 User',
                 'email' => 'dummy1@test.com',
             ]
         );
@@ -380,8 +432,8 @@ class APITest extends TestCase
         $response->assertJson([
             'data' => [
                 'name' => 'Dummy1 User',
-                'id' => 15
-            ]
+                'id'   => 15,
+            ],
         ]);
     }
 
@@ -398,8 +450,8 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'error' => [
                 'message',
-                'code'
-            ]
+                'code',
+            ],
         ]);
     }
 }

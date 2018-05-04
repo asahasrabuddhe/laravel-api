@@ -44,4 +44,9 @@ class User extends BaseUser
     {
         return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Post');
     }
+
+    public function comments()
+    {
+        return $this->hasMany('Asahasrabuddhe\LaravelAPI\Tests\Models\Comment');
+    }
 }
