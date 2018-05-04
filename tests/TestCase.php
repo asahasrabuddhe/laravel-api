@@ -12,6 +12,7 @@ use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\UserController;
 use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\AddressController;
 use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\PostController;
 use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
+use Asahasrabuddhe\LaravelAPI\Facades\ApiRoute;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -43,9 +44,9 @@ abstract class TestCase extends BaseTestCase
 
         $this->seedDatabase();
 
-        $this->app->make(BaseRouter::class)->resource('users', UserController::class);
-        $this->app->make(BaseRouter::class)->resource('posts', PostController::class);
-        $this->app->make(BaseRouter::class)->resource('comments', CommentController::class);
+        ApiRoute::resource('users', UserController::class);
+        ApiRoute::resource('posts', PostController::class);
+        ApiRoute::resource('comments', CommentController::class);
     }
 
     /**
