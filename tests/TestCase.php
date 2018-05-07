@@ -66,6 +66,8 @@ abstract class TestCase extends BaseTestCase
             'prefix'   => '',
         ]);
         $app['config']->set('api.perPage', 10);
+        $app['config']->set('api.prefix', 't_api');
+        $app['config']->set('api.version', 't1');
     }
 
     protected function migrateDatabase()
