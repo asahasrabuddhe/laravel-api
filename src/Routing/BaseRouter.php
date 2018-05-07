@@ -20,11 +20,7 @@ class BaseRouter extends Router
      */
     public function resource($name, $controller, array $options = [])
     {
-        if ($this->container && $this->container->bound('Asahasrabuddhe\LaravelAPI\Routing\ResourceRegistrar')) {
-            $registrar = $this->container->make('Asahasrabuddhe\LaravelAPI\Routing\ResourceRegistrar');
-        } else {
-            $registrar = new ResourceRegistrar($this);
-        }
+        $registrar = app()->make(ResourceRegistrar::class);
 
         $registrar->register($name, $controller, $options);
     }
