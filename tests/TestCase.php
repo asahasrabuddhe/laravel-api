@@ -10,9 +10,6 @@ use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Address;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Comment;
-use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\PostController;
-use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\UserController;
-use Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers\AddressController;
 use Asahasrabuddhe\LaravelAPI\Facades\ApiRoute;
 
 abstract class TestCase extends BaseTestCase
@@ -45,9 +42,14 @@ abstract class TestCase extends BaseTestCase
 
         $this->seedDatabase();
 
-        ApiRoute::resource('users', UserController::class);
-        ApiRoute::resource('posts', PostController::class);
-        ApiRoute::resource('comments', CommentController::class);
+        ApiRoute::group([
+            'middleware' => ['api'],
+            'namespace' => 'Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers'
+        ], function() {
+            ApiRoute::resource('users', 'UserController');
+            ApiRoute::resource('posts', 'PostController');
+            ApiRoute::resource('comments', 'CommentController');
+        });
     }
 
     /**
