@@ -8,60 +8,6 @@ use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
 class BaseResponse
 {
     /**
-     * Response message.
-     *
-     * @var string
-     */
-    private $message = null;
-
-    /**
-     * Data to send in response.
-     *
-     * @var array
-     */
-    private $data = null;
-
-    /**
-     * Get response message.
-     *
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * Set response message.
-     *
-     * @param string $message
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-    }
-
-    /**
-     * Get response data.
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Set response data.
-     *
-     * @param array $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
-
-    /**
      * Make new success response.
      *
      * @param string $message
