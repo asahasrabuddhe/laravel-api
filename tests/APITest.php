@@ -58,7 +58,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_all_users_with_related_fields_one_to_one()
     {
-        $response = $this->call('GET', '/t_api/t1/users?fields=name,email,address');
+        $response        = $this->call('GET', '/t_api/t1/users?fields=name,email,address');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -88,7 +88,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_all_users_with_related_fields_one_to_many()
     {
-        $response = $this->call('GET', '/t_api/t1/users?fields=name,email,posts');
+        $response        = $this->call('GET', '/t_api/t1/users?fields=name,email,posts');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -169,7 +169,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_all_users_with_filters()
     {
-        $response = $this->call('GET', '/t_api/t1/users?filters=id gt 5');
+        $response        = $this->call('GET', '/t_api/t1/users?filters=id gt 5');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -197,7 +197,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_all_users_with_filters_returns_error_for_unfilterable_fields()
     {
-        $response = $this->call('GET', '/t_api/t1/users?filters=email lk "Luc"');
+        $response        = $this->call('GET', '/t_api/t1/users?filters=email lk "Luc"');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 400);
@@ -212,7 +212,7 @@ class APITest extends TestCase
 
     public function test_get_all_users_with_limit()
     {
-        $response = $this->call('GET', '/t_api/t1/users?limit=5');
+        $response        = $this->call('GET', '/t_api/t1/users?limit=5');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -239,7 +239,7 @@ class APITest extends TestCase
 
     public function test_get_all_users_with_limit_returns_error_for_invalid_limit()
     {
-        $response = $this->call('GET', '/t_api/t1/users?limit=0');
+        $response        = $this->call('GET', '/t_api/t1/users?limit=0');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 400);
@@ -254,7 +254,7 @@ class APITest extends TestCase
 
     public function test_get_all_users_with_limit_returns_error_for_negative_limit()
     {
-        $response = $this->call('GET', '/t_api/t1/users?limit=-5');
+        $response        = $this->call('GET', '/t_api/t1/users?limit=-5');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 400);
@@ -269,7 +269,7 @@ class APITest extends TestCase
 
     public function test_get_all_users_with_order()
     {
-        $response = $this->call('GET', '/t_api/t1/users?order=id desc');
+        $response        = $this->call('GET', '/t_api/t1/users?order=id desc');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -297,7 +297,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_single_user()
     {
-        $response = $this->call('GET', '/t_api/t1/users/15');
+        $response        = $this->call('GET', '/t_api/t1/users/15');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -317,7 +317,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_single_user_returns_error_for_users_that_do_not_exist()
     {
-        $response = $this->call('GET', '/t_api/t1/users/1500');
+        $response        = $this->call('GET', '/t_api/t1/users/1500');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 404);
@@ -333,7 +333,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_single_user_with_one_to_one_relation_endpoint()
     {
-        $response = $this->call('GET', '/t_api/t1/users/15/address');
+        $response        = $this->call('GET', '/t_api/t1/users/15/address');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -357,7 +357,7 @@ class APITest extends TestCase
     /** @test */
     public function test_get_single_user_with_one_to_many_relation_endpoint()
     {
-        $response = $this->call('GET', '/t_api/t1/users/15/posts');
+        $response        = $this->call('GET', '/t_api/t1/users/15/posts');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -395,7 +395,7 @@ class APITest extends TestCase
         $response = $responseContent = null;
 
         // Verify newly created user
-        $response = $this->call('GET', '/t_api/t1/users/' . $id);
+        $response        = $this->call('GET', '/t_api/t1/users/' . $id);
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -424,7 +424,7 @@ class APITest extends TestCase
         $response = null;
 
         // Verify newly created user
-        $response = $this->call('GET', '/t_api/t1/users/15');
+        $response        = $this->call('GET', '/t_api/t1/users/15');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 200);
@@ -442,7 +442,7 @@ class APITest extends TestCase
         $response = $this->call('DELETE', '/t_api/t1/users/25');
         $this->assertEquals(200, $response->status());
 
-        $response = $this->call('GET', '/t_api/t1/users/25');
+        $response        = $this->call('GET', '/t_api/t1/users/25');
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals($response->status(), 404);
