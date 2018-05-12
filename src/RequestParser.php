@@ -412,7 +412,7 @@ class RequestParser
                     // This is default laravel behavior
                     $limit  = ($parts[3][0] == '') ? config('api.perPage') : $parts[3][0];
                     $offset = ($parts[4][0] == '') ? 0 : $parts[4][0];
-                    $order  = ($parts[5][0] == 'chronological') ? 'chronological' : 'reverse_chronological';
+                    $order  = ($parts[5][0] == 'asc') ? 'asc' : 'desc';
                     if (! empty($parts[7][0])) {
                         $subFields = explode(',', $parts[7][0]);
                         // This indicates if user specified fields for relation or not
