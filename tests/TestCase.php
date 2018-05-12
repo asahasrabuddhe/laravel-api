@@ -4,13 +4,12 @@ namespace Asahasrabuddhe\LaravelAPI\Tests;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
+use Asahasrabuddhe\LaravelAPI\Facades\ApiRoute;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\User;
-use Asahasrabuddhe\LaravelAPI\Routing\BaseRouter;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Address;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Comment;
-use Asahasrabuddhe\LaravelAPI\Facades\ApiRoute;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -44,8 +43,8 @@ abstract class TestCase extends BaseTestCase
 
         ApiRoute::group([
             'middleware' => ['api'],
-            'namespace' => 'Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers'
-        ], function() {
+            'namespace'  => 'Asahasrabuddhe\LaravelAPI\Tests\Http\Controllers',
+        ], function () {
             ApiRoute::resource('users', 'UserController');
             ApiRoute::resource('posts', 'PostController');
             ApiRoute::resource('comments', 'CommentController');
