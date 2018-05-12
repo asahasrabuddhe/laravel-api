@@ -26,7 +26,7 @@ class Comment extends BaseModel
      *
      * @var array
      */
-    protected $filterable = ['id'];
+    protected $filterable = ['id', 'user.id'];
 
     public function post()
     {

@@ -195,6 +195,23 @@ class APITest extends TestCase
     }
 
     /** @test */
+    public function test_get_all_comments_with_related_filter_one_to_many()
+    {
+        $response        = $this->call('GET', '/t_api/t1/comments?fields=content&filters=user.id eq 10');
+        $responseContent = json_decode($response->getContent());
+
+        $this->assertEquals($response->status(), 200);
+        $this->assertEquals('application/json', $response->headers->get('Content-Type'));
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'content'
+                ],
+            ],
+        ]);
+    }
+
+    /** @test */
     public function test_get_all_users_with_filters_returns_error_for_unfilterable_fields()
     {
         $response        = $this->call('GET', '/t_api/t1/users?filters=email lk "Luc"');
@@ -292,6 +309,23 @@ class APITest extends TestCase
             ],
         ]);
         $this->assertEquals($responseContent->data[0]->id, 50);
+    }
+
+    /** @test */
+    public function test_get_all_comments_with_related_order()
+    {
+        $response        = $this->call('GET', '/t_api/t1/comments?fields=content&order=user.id desc');
+        $responseContent = json_decode($response->getContent());
+
+        $this->assertEquals($response->status(), 200);
+        $this->assertEquals('application/json', $response->headers->get('Content-Type'));
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'content'
+                ],
+            ],
+        ]);
     }
 
     /** @test */
