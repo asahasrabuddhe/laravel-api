@@ -2,8 +2,8 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Handlers;
 
-use App\Exceptions\Handler;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\Exception\HttpResponseException;
 use Asahasrabuddhe\LaravelAPI\BaseResponse as Response;
 use Asahasrabuddhe\LaravelAPI\Exceptions\BaseException;
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\ValidationException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\ResourceNotFoundException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
 
 class ExceptionHandler extends Handler
@@ -31,6 +32,10 @@ class ExceptionHandler extends Handler
                         'url' => request()->url(),
                     ]));
             } elseif ($e instanceof ModelNotFoundException) {
+                return Response::exception(new BaseException('Requested resource not found', null, 404, 404, null, [
+                        'url' => request()->url(),
+                    ]));
+            } elseif ($e instanceof ResourceNotFoundException) {
                 return Response::exception(new BaseException('Requested resource not found', null, 404, 404, null, [
                         'url' => request()->url(),
                     ]));

@@ -3,9 +3,12 @@
 namespace Asahasrabuddhe\LaravelAPI;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\UnknownFieldException;
+use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidOffsetException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidPerPageLimitException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\FieldCannotBeFilteredException;
 use Asahasrabuddhe\LaravelAPI\Exceptions\Parse\InvalidFilterDefinitionException;
@@ -32,12 +35,12 @@ class RequestParser
     /**
      * Checks if ordering is specified correctly.
      */
-    const ORDER_FILTER = '/[\\s]*([\\w\\.]+)(?:[\\s](?!,))*(asc|desc|)/i';
+    const ORDER_FILTER = '/[\\s]*([\\w\\.]+)(?:[\\s](?!,))*(asc|desc)/i';
 
     /**
      * Extract order parts for relational field.
      */
-    const RELATION_ORDER_REGEX = '/[\\s]*([\\w]+)\\.([\\w]+)(?:[\\s](?!,))*(asc|desc|)/';
+    const RELATION_ORDER_REGEX = '/[\\s]*([\\w]+)\\.([\\w]+)(?:[\\s](?!,))*(asc|desc)/';
 
     // /**
     //  * Extract order parts for regular field
@@ -211,7 +214,7 @@ class RequestParser
      */
     protected function parseRequest()
     {
-        if (request()->limit) {
+        if (isset(request()->limit)) {
             if (request()->limit <= 0) {
                 throw new InvalidPerPageLimitException;
             }
@@ -220,7 +223,10 @@ class RequestParser
             $this->limit = config('api.perPage');
         }
 
-        if (request()->offset) {
+        if (isset(request()->offset)) {
+            if (request()->offset < 0) {
+                throw new InvalidOffsetException;
+            }
             $this->offset = request()->offset;
         } else {
             $this->offset = 0;
@@ -329,9 +335,9 @@ class RequestParser
     {
         switch (trim($matches[0])) {
             case 'eq':
-                return ' = ';
+                return' = ';
             case 'ne':
-                return' != ';
+                return' <> ';
             case 'gt':
                 return' > ';
             case 'ge':
@@ -356,7 +362,7 @@ class RequestParser
                     ], $order);
                 $this->order = $order;
             } else {
-                throw new InvalidOrderingDefinitionException();
+                throw new InvalidOrderingDefinitionException;
             }
         }
     }
@@ -370,7 +376,7 @@ class RequestParser
      */
     protected function formatRelationalOrderingFieldToSql($matches)
     {
-        return $matches[1] . '`.`' . $matches[2] . ' ' . $matches[3];
+        return '`' . $matches[1] . '`.`' . $matches[2] . '` ' . $matches[3];
     }
 
     /**
@@ -400,7 +406,6 @@ class RequestParser
                 preg_match_all(static::FIELD_PARTS_REGEX, $match, $parts);
                 $fieldName = $parts[1][0];
                 if (Str::contains($fieldName, ':') || call_user_func($this->model . '::relationExists', $fieldName)) {
-
                     // If field name has a colon, we assume its a relations
                     // OR
                     // If method with field name exists in the class, we assume its a relation
@@ -495,9 +500,13 @@ class RequestParser
                             $this->fields[] = $keyField;
                         }
                     }
-                } else {
-                    // Else, its a normal field
-                    $this->fields[] = $fieldName;
+                } else { // Else, its a normal field
+                    // Check if the field actually exists otherwise, throw exception
+                    if (Schema::hasColumn((new $this->model())->getTable(), $fieldName)) {
+                        $this->fields[] = $fieldName;
+                    } else {
+                        throw new UnknownFieldException;
+                    }
                 }
             }
         }

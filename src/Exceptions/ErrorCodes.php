@@ -18,5 +18,7 @@ class ErrorCodes
     const ORDERING_INVALID                    = 1005;
     const MAX_LIMIT                           = 1006;
     const INVALID_LIMIT                       = 1007;
+    const INVALID_OFFSET                      = 1008;
+    const ORDERING_INVALID_DEFINITION         = 1009;
     const RELATED_RESOURCE_NOT_EXISTS         = 1010;
 }

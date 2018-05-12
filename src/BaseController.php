@@ -17,6 +17,7 @@ use Asahasrabuddhe\LaravelAPI\Helpers\ReflectionHelper;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Asahasrabuddhe\LaravelAPI\Exceptions\ResourceNotFoundException;
 
 class BaseController extends Controller
 {
@@ -198,7 +199,7 @@ class BaseController extends Controller
         $object->fill(request()->all());
 
         // Fire creating event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'creating', $results);
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'creating', $object);
 
         $object->save();
 
@@ -207,9 +208,9 @@ class BaseController extends Controller
         \DB::commit();
 
         // Fire created event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'created', $results);
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'created', $object);
 
-        return BaseResponse::make('Resource created successfully', ['id' => $object->id], $meta);
+        return BaseResponse::make('Resource created successfully', ['id' => $object->id], $meta, 201);
     }
 
     public function update(...$args)
@@ -234,7 +235,7 @@ class BaseController extends Controller
         $object->fill(request()->all());
 
         // Fire updating event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updating', $results);
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updating', $object);
 
         $object->save();
 
@@ -243,7 +244,7 @@ class BaseController extends Controller
         \DB::commit();
 
         // Fire updated event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updated', $results);
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updated', $object);
 
         return BaseResponse::make('Resource updated successfully', ['id' => $object->id], $meta);
     }
@@ -268,7 +269,7 @@ class BaseController extends Controller
         }
 
         // Fire deleting event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleting', $results);
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleting', $object);
 
         $object->delete();
 
@@ -277,7 +278,7 @@ class BaseController extends Controller
         \DB::commit();
 
         // Fire deleted event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleted', $results);
+        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleted', $object);
 
         return BaseResponse::make('Resource deleted successfully', null, $meta);
     }
@@ -287,7 +288,7 @@ class BaseController extends Controller
         $this->validate();
 
         // To show relations, we just make a new fields parameter, which requests
-        // only object id, and the relation and get the results like normal index request
+        // only object id, and the relation and get the result like normal index request
 
         $fields = 'id,' . $relation . '.limit(' . ((request()->limit) ? request()->limit : $this->defaultLimit) .
             ')' . ((request()->offset) ? '.offset(' . request()->offset . ')' : '')
