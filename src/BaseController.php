@@ -699,7 +699,7 @@ class BaseController extends Controller
 
         $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
             ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
-            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
+            ((request()->order) ? '&order=' . urlencode(request()->order) : '');
 
         $queryString .= '&offset=' . ($offset - $limit);
 
@@ -713,7 +713,7 @@ class BaseController extends Controller
 
         $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
             ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
-            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
+            ((request()->order) ? '&order=' . urlencode(request()->order) : '');
 
         $queryString .= '&offset=' . ($offset + $limit);
 
