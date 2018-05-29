@@ -349,6 +349,8 @@ class RequestParser
                 return' <= ';
             case 'lk':
                 return' LIKE ';
+        default:
+                return $matches[0];
        }
     }
 
