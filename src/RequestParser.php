@@ -48,7 +48,7 @@ class RequestParser
     // const ORDER_REGEX = "/[\\s]*([\\w`\\.]+)(?:[\\s](?!,))*(asc|desc|)/";
 
     const OPERATOR_REGEX = '/[\\s]+|(\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b)|[\\s]+/i';
-    
+
     const NULL_NOT_NULL_REGEX = '/((\beq\b)|(\bne\b))[\\s]+(null)/i';
 
     const RELATION_FILTER_REGEX = '/([\\w]+)\\.([\\w]+)[\\s]+((\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))/i';
