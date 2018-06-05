@@ -205,7 +205,7 @@ class RequestParserTest extends TestCase
 
         $parser = new RequestParser(User::class);
 
-        $this->assertEquals($parser->getFilters(), '(`id` =  5)');
+        $this->assertEquals($parser->getFilters(), '(`id`  =  5)');
     }
 
     /** @test */
@@ -231,7 +231,7 @@ class RequestParserTest extends TestCase
 
         $parser = new RequestParser(User::class);
 
-        $this->assertEquals($parser->getFilters(), '(`name`  LIKE "Luc")');
+        $this->assertEquals($parser->getFilters(), '(`name`  LIKE  "Luc")');
     }
 
     /** @test */

@@ -27,11 +27,11 @@ class RequestParser
     /**
      * Checks if filters are correctly specified.
      */
-    const FILTER_REGEX = '/(\\((?:[\\s]*(?:and|or)?[\\s]*[\\w\\.]+[\\s]+(?:eq|ne|gt|ge|lt|le|lk)[\\s]+(?:\\"(?:[^\\"\\\\]|\\\\.)*\\"|\\d+(,\\d+)*(\\.\\d+(e\\d+)?)?|null)[\\s]*|(?R))*\\))/i';
+    const FILTER_REGEX = '/(\\((?:[\\s]*(?:and|or)?[\\s]*[\\w\\.]+[\\s]+(?:(\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))[\\s]+(?:\\"(?:[^\\"\\\\]|\\\\.)*\\"|\\d+(,\\d+)*(\\.\\d+(e\\d+)?)?|null)[\\s]*|(?R))*\\))/i';
     /**
      * Extracts filter parts.
      */
-    const FILTER_PARTS_REGEX = '/([\\w\\.]+)[\\s]+(?:eq|ne|gt|ge|lt|le|lk)[\\s]+(?:"(?:[^"\\\\]|\\\\.)*"|\\d+(?:,\\d+)*(?:\\.\\d+(?:e\\d+)?)?|null)/i';
+    const FILTER_PARTS_REGEX = '/([\\w\\.]+)[\\s]+(?:(\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))[\\s]+(?:"(?:[^"\\\\]|\\\\.)*"|\\d+(?:,\\d+)*(?:\\.\\d+(?:e\\d+)?)?|null)/i';
     /**
      * Checks if ordering is specified correctly.
      */
@@ -47,13 +47,13 @@ class RequestParser
     //  */
     // const ORDER_REGEX = "/[\\s]*([\\w`\\.]+)(?:[\\s](?!,))*(asc|desc|)/";
 
-    const OPERATOR_REGEX = '/[\\s]+eq|ne|gt|ge|lt|le|lk[\\s]+/i';
+    const OPERATOR_REGEX = '/[\\s]+|(\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b)|[\\s]+/i';
 
-    const NULL_NOT_NULL_REGEX = '/(ne|eq)[\\s]+(null)/i';
+    const NULL_NOT_NULL_REGEX = '[\\s]+|(eq) (null)|(ne) (null)|[\\s]';
 
-    const RELATION_FILTER_REGEX = '/([\\w]+)\\.([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i';
+    const RELATION_FILTER_REGEX = '/([\\w]+)\\.([\\w]+)[\\s]+((\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))/i';
 
-    const REGULAR_FILTER_REGEX = '/([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i';
+    const REGULAR_FILTER_REGEX = '/([\\w]+)[\\s]+((\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))/i';
 
     /**
      * Full class reference to the model represented in this request.
