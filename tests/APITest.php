@@ -205,7 +205,7 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
-                    'content'
+                    'content',
                 ],
             ],
         ]);
@@ -322,7 +322,7 @@ class APITest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
-                    'content'
+                    'content',
                 ],
             ],
         ]);
