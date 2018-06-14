@@ -4,7 +4,7 @@ namespace Asahasrabuddhe\LaravelAPI\Exceptions;
 
 use Illuminate\Http\Response;
 
-class UnauthorizedException extends ApiException
+class UnauthorizedException extends BaseException
 {
     protected $statusCode = Response::HTTP_UNAUTHORIZED;
 
