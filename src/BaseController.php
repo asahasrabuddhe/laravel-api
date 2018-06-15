@@ -193,10 +193,17 @@ class BaseController extends Controller
 
         $this->validate();
 
+        $fields = request()->all();
+        foreach($fields as $key => $value) {
+            if(in_array($key, $this->exclude)) {
+                unset($fields[$key]);
+            }
+        }
+        
         // Create new object
         /** @var ApiModel $object */
         $object = new $this->model();
-        $object->fill(request()->all());
+        $object->fill($fields);
 
         // Fire creating event
         Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'creating', $object);
@@ -699,7 +706,7 @@ class BaseController extends Controller
 
         $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
             ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
-            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
+            ((request()->order) ? '&order=' . urlencode(request()->order) : '');
 
         $queryString .= '&offset=' . ($offset - $limit);
 
@@ -713,7 +720,7 @@ class BaseController extends Controller
 
         $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
             ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
-            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
+            ((request()->order) ? '&order=' . urlencode(request()->order) : '');
 
         $queryString .= '&offset=' . ($offset + $limit);
 

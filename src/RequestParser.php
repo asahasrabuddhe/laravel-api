@@ -27,11 +27,11 @@ class RequestParser
     /**
      * Checks if filters are correctly specified.
      */
-    const FILTER_REGEX = '/(\\((?:[\\s]*(?:and|or)?[\\s]*[\\w\\.]+[\\s]+(?:eq|ne|gt|ge|lt|le|lk)[\\s]+(?:\\"(?:[^\\"\\\\]|\\\\.)*\\"|\\d+(,\\d+)*(\\.\\d+(e\\d+)?)?|null)[\\s]*|(?R))*\\))/i';
+    const FILTER_REGEX = '/(\\((?:[\\s]*(?:and|or)?[\\s]*[\\w\\.]+[\\s]+(?:(\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))[\\s]+(?:\\"(?:[^\\"\\\\]|\\\\.)*\\"|\\d+(,\\d+)*(\\.\\d+(e\\d+)?)?|null)[\\s]*|(?R))*\\))/i';
     /**
      * Extracts filter parts.
      */
-    const FILTER_PARTS_REGEX = '/([\\w\\.]+)[\\s]+(?:eq|ne|gt|ge|lt|le|lk)[\\s]+(?:"(?:[^"\\\\]|\\\\.)*"|\\d+(?:,\\d+)*(?:\\.\\d+(?:e\\d+)?)?|null)/i';
+    const FILTER_PARTS_REGEX = '/([\\w\\.]+)[\\s]+(?:(\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))[\\s]+(?:"(?:[^"\\\\]|\\\\.)*"|\\d+(?:,\\d+)*(?:\\.\\d+(?:e\\d+)?)?|null)/i';
     /**
      * Checks if ordering is specified correctly.
      */
@@ -47,13 +47,13 @@ class RequestParser
     //  */
     // const ORDER_REGEX = "/[\\s]*([\\w`\\.]+)(?:[\\s](?!,))*(asc|desc|)/";
 
-    const OPERATOR_REGEX = '/[\\s]+eq|ne|gt|ge|lt|le|lk[\\s]+/i';
+    const OPERATOR_REGEX = '/[\\s]+|(\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b)|[\\s]+/i';
 
     const NULL_NOT_NULL_REGEX = '/(ne|eq)[\\s]+(null)/i';
 
-    const RELATION_FILTER_REGEX = '/([\\w]+)\\.([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i';
+    const RELATION_FILTER_REGEX = '/([\\w]+)\\.([\\w]+)[\\s]+((\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))/i';
 
-    const REGULAR_FILTER_REGEX = '/([\\w]+)[\\s]+(eq|ne|gt|ge|lt|le|lk)/i';
+    const REGULAR_FILTER_REGEX = '/([\\w]+)[\\s]+((\beq\b)|(\bne\b)|(\bgt\b)|(\bge\b)|(\blt\b)|(\ble\b)|(\blk\b))/i';
 
     /**
      * Full class reference to the model represented in this request.
@@ -125,11 +125,20 @@ class RequestParser
      */
     private $attributes = [];
 
+    /**
+     * RequestParser constructor.
+     * @param $model
+     * @throws \Exception
+     */
     public function __construct($model)
     {
         $this->model      = $model;
         $this->primaryKey = call_user_func([new $this->model(), 'getKeyName']);
-        $this->parseRequest();
+        try {
+            $this->parseRequest();
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -209,8 +218,10 @@ class RequestParser
      *
      * @return $this current controller object for chain method calling
      * @throws InvalidPerPageLimitException
+     * @throws InvalidOffsetException
      * @throws InvalidFilterDefinitionException
      * @throws InvalidOrderingDefinitionException
+     * @throws FieldCannotBeFilteredException
      */
     protected function parseRequest()
     {
@@ -242,11 +253,20 @@ class RequestParser
         return $this;
     }
 
+    /**
+     * @throws UnknownFieldException
+     */
     protected function extractFields()
     {
         if (request()->fields) {
             $this->parseFields(request()->fields);
-        } elseif (null !== call_user_func($this->model . '::getResource')) {
+        } elseif (null === call_user_func($this->model . '::getResource')) {
+            // Else, by default, we only return default set of visible fields
+            $fields = call_user_func($this->model . '::getDefaultFields');
+            // We parse the default fields in same way as above so that, if
+            // relations are included in default fields, they also get included
+            $this->parseFields(implode(',', $fields));
+        } else {
             // Fully qualified name of the API Resource
             $className = call_user_func($this->model . '::getResource');
             // Reflection Magic
@@ -255,18 +275,16 @@ class RequestParser
             $fields = $reflection->getFields();
             // parse extracted fields
             $this->parseFields(implode(',', $fields));
-        } else {
-            // Else, by default, we only return default set of visible fields
-            $fields = call_user_func($this->model . '::getDefaultFields');
-            // We parse the default fields in same way as above so that, if
-            // relations are included in default fields, they also get included
-            $this->parseFields(implode(',', $fields));
         }
         if (! in_array($this->primaryKey, $this->fields)) {
             $this->fields[] = $this->primaryKey;
         }
     }
 
+    /**
+     * @throws FieldCannotBeFilteredException
+     * @throws InvalidFilterDefinitionException
+     */
     protected function extractFilters()
     {
         if (request()->filters) {
@@ -307,7 +325,7 @@ class RequestParser
      */
     protected function formatRelationalFilteredFieldToSql($matches)
     {
-        return '`' . $matches[1] . '`.`' . $matches[2] . '` ' . $matches[3];
+        return '`' . $matches[1] . '_' . $matches[2] . '` ' . $matches[3];
     }
 
     /**
@@ -328,6 +346,8 @@ class RequestParser
                 return 'is not ' . $matches[2];
             case 'eq':
                 return 'is ' . $matches[2];
+            default:
+                return $matches[1];
         }
     }
 
@@ -348,9 +368,14 @@ class RequestParser
                 return' <= ';
             case 'lk':
                 return' LIKE ';
+        default:
+                return $matches[0];
        }
     }
 
+    /**
+     * @throws InvalidOrderingDefinitionException
+     */
     protected function extractOrdering()
     {
         if (request()->order) {
@@ -376,7 +401,7 @@ class RequestParser
      */
     protected function formatRelationalOrderingFieldToSql($matches)
     {
-        return '`' . $matches[1] . '`.`' . $matches[2] . '` ' . $matches[3];
+        return '`' . $matches[1] . '_' . $matches[2] . '` ' . $matches[3];
     }
 
     /**
@@ -396,6 +421,7 @@ class RequestParser
      * and adds width relations.
      *
      * @param $fields
+     * @throws UnknownFieldException
      */
     private function parseFields($fields)
     {
@@ -412,7 +438,7 @@ class RequestParser
                     // This is default laravel behavior
                     $limit  = ($parts[3][0] == '') ? config('api.perPage') : $parts[3][0];
                     $offset = ($parts[4][0] == '') ? 0 : $parts[4][0];
-                    $order  = ($parts[5][0] == 'chronological') ? 'chronological' : 'reverse_chronological';
+                    $order  = ($parts[5][0] == 'asc') ? 'asc' : 'desc';
                     if (! empty($parts[7][0])) {
                         $subFields = explode(',', $parts[7][0]);
                         // This indicates if user specified fields for relation or not
