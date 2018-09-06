@@ -329,7 +329,7 @@ class BaseModel extends Model
                     $relationAttribute = [$relationAttribute];
                 }
 
-                $relationKey = explode('.', $relation->getQualifiedParentKeyName())[1];
+                $relationKey = explode('.', $relation->getQualifiedForeignKeyName())[1];
 
                 foreach ($relationAttribute as $val) {
                     if ($val !== null) {
@@ -343,6 +343,11 @@ class BaseModel extends Model
                         if (! $model) {
                             // Resource not found
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
+                        }
+                        
+                        //set all data provided
+                        foreach($val as $k => $v){
+                            $model->{$k} = $v;
                         }
 
                         // Only update relation key to attach $model to $this object
