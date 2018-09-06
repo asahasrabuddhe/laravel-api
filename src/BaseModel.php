@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
+use Illuminate\Support\Facades\DB;
 class BaseModel extends Model
 {
     /**
@@ -317,13 +317,14 @@ class BaseModel extends Model
         }
 
         parent::save($options);
-
+        $parentId=DB::getPdo()->lastInsertId();
         // Fill all other relations
         foreach ($this->relationAttributes as $key => $relationAttribute) {
             /** @var Relation $relation */
-            $relation   = call_user_func([$this, $key]);
+            $relation = call_user_func([$this, $key]);
             $primaryKey = $relation->getRelated()->getKeyName();
-
+            $className = get_class($relation->getRelated());
+            
             if ($relation instanceof HasOne || $relation instanceof HasMany) {
                 if ($relation instanceof HasOne) {
                     $relationAttribute = [$relationAttribute];
@@ -333,16 +334,20 @@ class BaseModel extends Model
 
                 foreach ($relationAttribute as $val) {
                     if ($val !== null) {
-                        if (! isset($val[$primaryKey])) {
-                            throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
+                        if (!isset($val[$primaryKey])) {  
+                            /** @var Model $model */
+                            $model = new $className;
+                            $val[$relationKey] = $parentId;
+                        }else{
+                            $model = $relation->getRelated()->find($val[$primaryKey]);
                         }
 
-                        /** @var Model $model */
-                        $model = $relation->getRelated()->find($val[$primaryKey]);
-
-                        if (! $model) {
+                        if (!$model) {
                             // Resource not found
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
+                        }
+                        foreach ($val as $k => $v) {
+                            $model->{$k} = $v;
                         }
 
                         //set all data provided
@@ -357,18 +362,18 @@ class BaseModel extends Model
                 }
             } elseif ($relation instanceof BelongsToMany) {
                 $relatedIds = [];
-
                 // Value is an array of related models
+                $relationKey = explode('.', $relation->getQualifiedRelatedPivotKeyName())[1];
                 foreach ($relationAttribute as $val) {
                     if ($val !== null) {
-                        if (! isset($val[$primaryKey])) {
+                        if (!isset($val[$relationKey])) {
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
 
                         /** @var Model $model */
-                        $model = $relation->getRelated()->find($val[$primaryKey]);
+                        $model = $relation->getRelated()->find($val[$relationKey]);
 
-                        if (! $model) {
+                        if (!$model) {
                             // Resource not found
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
@@ -379,14 +384,14 @@ class BaseModel extends Model
                             // We have additional fields other than primary key
                             // that need to be saved to pivot table
                             /*
-                                [
-                                    {
-                                        "id": 12, // Primary key
-                                        "pivot": {
-                                            "count": 8 // Pivot table column
-                                        }
-                                    }
-                                ]
+                              [
+                              {
+                              "id": 12, // Primary key
+                              "pivot": {
+                              "count": 8 // Pivot table column
+                              }
+                              }
+                              ]
                              */
                             $relatedIds[$model->getKey()] = $val['pivot'];
                         } else {
