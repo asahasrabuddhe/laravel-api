@@ -344,9 +344,9 @@ class BaseModel extends Model
                             // Resource not found
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
-                        
+
                         //set all data provided
-                        foreach($val as $k => $v){
+                        foreach ($val as $k => $v) {
                             $model->{$k} = $v;
                         }
 
