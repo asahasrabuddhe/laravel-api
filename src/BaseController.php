@@ -424,9 +424,9 @@ class BaseController extends Controller
                                 $join->on('outer_query.id', '=', $q->getQualifiedRelatedPivotKeyName());
                                 $join->on('outer_query.whatever', '=', $q->getQualifiedForeignPivotKeyName());
                             })
-                            ->setBindings(array_merge($q->getQuery()->getBindings(), $outerQuery->getBindings()))
-                            ->where('rank', '<=', $relation['limit'] + $relation['offset'])
-                            ->where('rank', '>', $relation['offset']);
+                            ->setBindings(array_merge($q->getQuery()->getBindings(), $outerQuery->getBindings()));
+//                            ->where('rank', '<=', $relation['limit'] + $relation['offset'])
+//                            ->where('rank', '>', $relation['offset']);
                     } else {
                         // We need to select foreign key so that Laravel can match to which records these
                         // need to be attached
@@ -454,11 +454,11 @@ class BaseController extends Controller
 
                         $q->select($fields);
 
-                        $q->take($relation['limit']);
-
-                        if ($relation['offset'] !== 0) {
-                            $q->skip($relation['offset']);
-                        }
+//                        $q->take($relation['limit']);
+//
+//                        if ($relation['offset'] !== 0) {
+//                            $q->skip($relation['offset']);
+//                        }
                     }
 
                     $this->parser->setRelations($relations);
