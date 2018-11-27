@@ -193,10 +193,17 @@ class BaseController extends Controller
 
         $this->validate();
 
+        $fields = request()->all();
+        foreach ($fields as $key => $value) {
+            if (in_array($key, $this->exclude)) {
+                unset($fields[$key]);
+            }
+        }
+
         // Create new object
         /** @var ApiModel $object */
         $object = new $this->model();
-        $object->fill(request()->all());
+        $object->fill($fields);
 
         // Fire creating event
         Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'creating', $object);
@@ -417,9 +424,9 @@ class BaseController extends Controller
                                 $join->on('outer_query.id', '=', $q->getQualifiedRelatedPivotKeyName());
                                 $join->on('outer_query.whatever', '=', $q->getQualifiedForeignPivotKeyName());
                             })
-                            ->setBindings(array_merge($q->getQuery()->getBindings(), $outerQuery->getBindings()))
-                            ->where('rank', '<=', $relation['limit'] + $relation['offset'])
-                            ->where('rank', '>', $relation['offset']);
+                            ->setBindings(array_merge($q->getQuery()->getBindings(), $outerQuery->getBindings()));
+//                            ->where('rank', '<=', $relation['limit'] + $relation['offset'])
+//                            ->where('rank', '>', $relation['offset']);
                     } else {
                         // We need to select foreign key so that Laravel can match to which records these
                         // need to be attached
@@ -447,11 +454,11 @@ class BaseController extends Controller
 
                         $q->select($fields);
 
-                        $q->take($relation['limit']);
-
-                        if ($relation['offset'] !== 0) {
-                            $q->skip($relation['offset']);
-                        }
+//                        $q->take($relation['limit']);
+//
+//                        if ($relation['offset'] !== 0) {
+//                            $q->skip($relation['offset']);
+//                        }
                     }
 
                     $this->parser->setRelations($relations);
@@ -699,7 +706,7 @@ class BaseController extends Controller
 
         $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
             ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
-            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
+            ((request()->order) ? '&order=' . urlencode(request()->order) : '');
 
         $queryString .= '&offset=' . ($offset - $limit);
 
@@ -713,7 +720,7 @@ class BaseController extends Controller
 
         $queryString = ((request()->fields) ? '&fields=' . urlencode(request()->fields) : '') .
             ((request()->filters) ? '&filters=' . urlencode(request()->filters) : '') .
-            ((request()->order) ? '&fields=' . urlencode(request()->order) : '');
+            ((request()->order) ? '&order=' . urlencode(request()->order) : '');
 
         $queryString .= '&offset=' . ($offset + $limit);
 
