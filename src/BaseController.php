@@ -654,9 +654,7 @@ class BaseController extends Controller
         if (! $single) {
             $meta = [
                 'paging' => [
-                    'links' => [
-
-                    ],
+                    'links' => null,
                 ],
             ];
             $limit      = $this->parser->getLimit();
