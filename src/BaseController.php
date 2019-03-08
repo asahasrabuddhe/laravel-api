@@ -206,7 +206,7 @@ class BaseController extends Controller
         $object->fill($fields);
 
         // Fire creating event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'creating', $object);
+        Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'creating', $object);
 
         $object->save();
 
@@ -215,7 +215,7 @@ class BaseController extends Controller
         \DB::commit();
 
         // Fire created event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'created', $object);
+        Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'created', $object);
 
         return BaseResponse::make('Resource created successfully', ['id' => $object->id], $meta, 201);
     }
@@ -242,7 +242,7 @@ class BaseController extends Controller
         $object->fill(request()->all());
 
         // Fire updating event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updating', $object);
+        Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updating', $object);
 
         $object->save();
 
@@ -251,7 +251,7 @@ class BaseController extends Controller
         \DB::commit();
 
         // Fire updated event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updated', $object);
+        Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'updated', $object);
 
         return BaseResponse::make('Resource updated successfully', ['id' => $object->id], $meta);
     }
@@ -276,7 +276,7 @@ class BaseController extends Controller
         }
 
         // Fire deleting event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleting', $object);
+        Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleting', $object);
 
         $object->delete();
 
@@ -285,7 +285,7 @@ class BaseController extends Controller
         \DB::commit();
 
         // Fire deleted event
-        Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleted', $object);
+        Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . 'deleted', $object);
 
         return BaseResponse::make('Resource deleted successfully', null, $meta);
     }
@@ -581,9 +581,9 @@ class BaseController extends Controller
         $this->processAppends($results);
 
         if ($single) {
-            Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . '.retrived', $results);
+            Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . '.retrived', $results);
         } else {
-            Event::fire(strtolower((new \ReflectionClass($this->model))->getShortName()) . 's.retrived', $results);
+            Event::dispatch(strtolower((new \ReflectionClass($this->model))->getShortName()) . 's.retrived', $results);
         }
 
         $this->results = $results;
