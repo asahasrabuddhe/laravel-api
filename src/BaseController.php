@@ -517,9 +517,8 @@ class BaseController extends Controller
             $skip = 0;
         } else {
             $skip = $offset;
+            $this->query->skip($skip);
         }
-
-        $this->query->skip($skip);
 
         $this->query->take($limit);
 
@@ -666,12 +665,12 @@ class BaseController extends Controller
             // result. As, there is single result in count query,
             // and setting offset will not return that record
             $offset = $this->query->getQuery()->offset;
-
-            $this->query->offset(0);
+            
+            if ($offset > 0) {
+                $this->query->offset($offset);
+            }
 
             $totalRecords = $this->query->count($this->table . '.' . $this->primaryKey);
-
-            $this->query->offset($offset);
 
             $meta['paging']['total'] = $totalRecords;
 
