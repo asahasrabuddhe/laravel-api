@@ -2,7 +2,6 @@
 
 namespace Asahasrabuddhe\LaravelAPI\Tests;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Asahasrabuddhe\LaravelAPI\Facades\ApiRoute;
 use Asahasrabuddhe\LaravelAPI\Tests\Models\Post;

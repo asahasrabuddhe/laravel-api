@@ -665,7 +665,7 @@ class BaseController extends Controller
             // result. As, there is single result in count query,
             // and setting offset will not return that record
             $offset = $this->query->getQuery()->offset;
-            
+
             if ($offset > 0) {
                 $this->query->offset($offset);
             }
