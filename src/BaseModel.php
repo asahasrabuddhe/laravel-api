@@ -5,13 +5,14 @@ namespace Asahasrabuddhe\LaravelAPI;
 use Closure;
 use Carbon\Carbon;
 use DateTimeInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\DB;
+
 class BaseModel extends Model
 {
     /**
@@ -321,10 +322,10 @@ class BaseModel extends Model
         // Fill all other relations
         foreach ($this->relationAttributes as $key => $relationAttribute) {
             /** @var Relation $relation */
-            $relation = call_user_func([$this, $key]);
+            $relation   = call_user_func([$this, $key]);
             $primaryKey = $relation->getRelated()->getKeyName();
-            $className = get_class($relation->getRelated());
-            
+            $className  = get_class($relation->getRelated());
+
             if ($relation instanceof HasOne || $relation instanceof HasMany) {
                 if ($relation instanceof HasOne) {
                     $relationAttribute = [$relationAttribute];
@@ -334,15 +335,15 @@ class BaseModel extends Model
 
                 foreach ($relationAttribute as $val) {
                     if ($val !== null) {
-                        if (!isset($val[$primaryKey])) {  
+                        if (! isset($val[$primaryKey])) {
                             /** @var Model $model */
-                            $model = new $className;
+                            $model             = new $className;
                             $val[$relationKey] = $parentId;
-                        }else{
+                        } else {
                             $model = $relation->getRelated()->find($val[$primaryKey]);
                         }
 
-                        if (!$model) {
+                        if (! $model) {
                             // Resource not found
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
@@ -366,14 +367,14 @@ class BaseModel extends Model
                 $relationKey = explode('.', $relation->getQualifiedRelatedPivotKeyName())[1];
                 foreach ($relationAttribute as $val) {
                     if ($val !== null) {
-                        if (!isset($val[$relationKey])) {
+                        if (! isset($val[$relationKey])) {
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
 
                         /** @var Model $model */
                         $model = $relation->getRelated()->find($val[$relationKey]);
 
-                        if (!$model) {
+                        if (! $model) {
                             // Resource not found
                             throw new RelatedResourceNotFoundException('Resource for relation "' . $key . '" not found');
                         }
