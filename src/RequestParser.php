@@ -368,6 +368,8 @@ class RequestParser
                 return' <= ';
             case 'lk':
                 return' LIKE ';
+            case 'nlk':
+                return' NOT LIKE ';
         default:
                 return $matches[0];
        }
